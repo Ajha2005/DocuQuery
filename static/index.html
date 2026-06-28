@@ -1,3 +1,5 @@
+
+cat > static/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,153 +8,293 @@
 <title>DocuQuery</title>
 <style>
   * { box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0c12;
+    --bg-grad-a: #0a0c12;
+    --bg-grad-b: #11141d;
+    --card: #151823;
+    --card-border: #232838;
+    --card-hover: #1b1f2d;
+    --text: #eef0f4;
+    --text-dim: #9aa0ac;
+    --text-faint: #5a5f6e;
+    --accent: #5b8cff;
+    --accent-dim: #3d68e0;
+    --accent-glow: rgba(91, 140, 255, 0.25);
+    --green: #5fe39b;
+    --green-bg: #103620;
+    --amber: #f0c66f;
+    --amber-bg: #3a2f13;
+    --red: #f0707a;
+    --red-bg: #391419;
+    --blue-bg: #142337;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f1117;
-    color: #e6e6e6;
+    background: radial-gradient(circle at 20% 0%, var(--bg-grad-b), var(--bg-grad-a) 60%);
+    color: var(--text);
     margin: 0;
-    padding: 2rem;
+    padding: 3rem 1.5rem;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
+
   .container {
     max-width: 720px;
     margin: 0 auto;
   }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+
   h1 {
-    font-size: 1.6rem;
-    margin-bottom: 0.25rem;
+    font-size: 1.9rem;
+    margin: 0 0 0.35rem 0;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
   }
+
+  h1 .logo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    flex-shrink: 0;
+  }
+
   .subtitle {
-    color: #9aa0ac;
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    margin-left: 1.55rem;
   }
+
   .card {
-    background: #1a1d27;
-    border: 1px solid #2a2e3a;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.02) inset, 0 8px 24px rgba(0,0,0,0.18);
+    transition: border-color 0.2s ease;
   }
+
+  .card:hover {
+    border-color: #2c3245;
+  }
+
   .card h2 {
-    font-size: 1rem;
-    margin: 0 0 1rem 0;
-    color: #c7cad1;
-  }
-  input[type="file"] {
-    color: #e6e6e6;
-    margin-bottom: 0.75rem;
-    display: block;
-  }
-  select, input[type="text"] {
-    width: 100%;
-    padding: 0.6rem 0.75rem;
-    border-radius: 8px;
-    border: 1px solid #2a2e3a;
-    background: #11131a;
-    color: #e6e6e6;
     font-size: 0.95rem;
-    margin-bottom: 0.75rem;
+    margin: 0 0 1.1rem 0;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
-  button {
-    background: #4f7cff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    color: var(--accent);
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* File input styled as a dropzone-ish row */
+  input[type="file"] {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    display: block;
+    font-size: 0.88rem;
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px dashed var(--card-border);
+    border-radius: 10px;
+    background: #0d0f16;
     cursor: pointer;
+  }
+
+  input[type="file"]::file-selector-button {
+    background: #232838;
+    color: var(--text);
+    border: none;
+    padding: 0.45rem 0.9rem;
+    border-radius: 7px;
+    margin-right: 0.75rem;
+    cursor: pointer;
+    font-size: 0.82rem;
     transition: background 0.15s;
   }
-  button:hover { background: #3d68e0; }
-  button:disabled { background: #3a3f4d; cursor: not-allowed; }
+
+  input[type="file"]::file-selector-button:hover {
+    background: #2c3247;
+  }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: #0d0f16;
+    color: var(--text);
+    font-size: 0.95rem;
+    margin-bottom: 0.85rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--text-faint);
+  }
+
+  button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: white;
+    border: none;
+    padding: 0.65rem 1.3rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.1s;
+    box-shadow: 0 4px 14px var(--accent-glow);
+  }
+
+  button:hover { filter: brightness(1.1); }
+  button:active { transform: translateY(1px); }
+  button:disabled {
+    background: #2a2e3a;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: none;
+  }
+
   .status {
     font-size: 0.85rem;
-    margin-top: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
+    margin-top: 0.6rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
   }
-  .status.ready { background: #133a1f; color: #6fd98a; }
-  .status.processing { background: #3a2f13; color: #f0c66f; }
-  .status.failed { background: #3a1313; color: #f06f6f; }
-  .status.info { background: #1a2a3a; color: #6fb3f0; }
+  .status.ready { background: var(--green-bg); color: var(--green); border-left-color: var(--green); }
+  .status.processing { background: var(--amber-bg); color: var(--amber); border-left-color: var(--amber); }
+  .status.failed { background: var(--red-bg); color: var(--red); border-left-color: var(--red); }
+  .status.info { background: var(--blue-bg); color: #79b7ff; border-left-color: #79b7ff; }
+
   .doc-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
   .doc-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #2a2e3a;
+    padding: 0.65rem 0.25rem;
+    border-bottom: 1px solid var(--card-border);
     font-size: 0.9rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background 0.15s;
+    border-radius: 6px;
   }
+  .doc-list li:hover { background: rgba(255,255,255,0.02); }
   .doc-list li:last-child { border-bottom: none; }
+
   .badge {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.5rem;
+    font-size: 0.68rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 999px;
     text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
   }
-  .badge.ready { background: #133a1f; color: #6fd98a; }
-  .badge.processing { background: #3a2f13; color: #f0c66f; }
-  .badge.failed { background: #3a1313; color: #f06f6f; }
+  .badge.ready { background: var(--green-bg); color: var(--green); }
+  .badge.processing { background: var(--amber-bg); color: var(--amber); }
+  .badge.failed { background: var(--red-bg); color: var(--red); }
+
   .answer-box {
-    background: #11131a;
-    border-radius: 8px;
-    padding: 1rem;
+    background: #0d0f16;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 1.1rem;
     margin-top: 1rem;
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     white-space: pre-wrap;
   }
+
   .sources {
-    margin-top: 0.75rem;
+    margin-top: 0.85rem;
   }
+
   .source-chip {
     display: inline-block;
-    background: #1f2433;
-    color: #9aa0ac;
+    background: #1c2031;
+    color: var(--text-dim);
     font-size: 0.75rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    margin: 0.2rem 0.3rem 0.2rem 0;
+    padding: 0.32rem 0.65rem;
+    border-radius: 7px;
+    margin: 0.2rem 0.35rem 0.2rem 0;
+    border: 1px solid var(--card-border);
   }
+
   .loading {
-    color: #9aa0ac;
+    color: var(--text-faint);
     font-size: 0.85rem;
   }
+
   footer {
     text-align: center;
-    color: #5a5f6b;
+    color: var(--text-faint);
     font-size: 0.8rem;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>📄 DocuQuery</h1>
-  <div class="subtitle">Upload a PDF, then ask it questions in plain English.</div>
+  <header>
+    <h1><span class="logo-dot"></span>DocuQuery</h1>
+    <div class="subtitle">Upload a PDF, then ask it questions in plain English.</div>
+  </header>
 
   <div class="card">
-    <h2>1. Upload a document</h2>
+    <h2><span class="step-num">1</span>Upload a document</h2>
     <input type="file" id="fileInput" accept="application/pdf">
     <button id="uploadBtn">Upload PDF</button>
     <div id="uploadStatus"></div>
   </div>
 
   <div class="card">
-    <h2>2. Your documents</h2>
+    <h2><span class="step-num">2</span>Your documents</h2>
     <ul class="doc-list" id="docList">
       <li class="loading">Loading...</li>
     </ul>
   </div>
 
   <div class="card">
-    <h2>3. Ask a question</h2>
+    <h2><span class="step-num">3</span>Ask a question</h2>
     <select id="docSelect">
       <option value="">Select a document...</option>
     </select>
@@ -305,3 +447,4 @@
 </script>
 </body>
 </html>
+EOF
