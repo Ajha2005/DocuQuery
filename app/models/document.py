@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
@@ -11,7 +11,7 @@ class Document(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     filename = Column(String, nullable=False)
-    upload_time = Column(DateTime, default=datetime.utcnow, nullable=False)
+    upload_time = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     page_count = Column(Integer, nullable=True)
     status = Column(String, default="processing", nullable=False)
 
