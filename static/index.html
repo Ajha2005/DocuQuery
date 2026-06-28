@@ -1,5 +1,3 @@
-
-cat > static/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +8,10 @@ cat > static/index.html << 'EOF'
   * { box-sizing: border-box; }
 
   :root {
-    --bg: #0a0c12;
     --bg-grad-a: #0a0c12;
     --bg-grad-b: #11141d;
     --card: #151823;
     --card-border: #232838;
-    --card-hover: #1b1f2d;
     --text: #eef0f4;
     --text-dim: #9aa0ac;
     --text-faint: #5a5f6e;
@@ -41,14 +37,9 @@ cat > static/index.html << 'EOF'
     -webkit-font-smoothing: antialiased;
   }
 
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-  }
+  .container { max-width: 720px; margin: 0 auto; }
 
-  header {
-    margin-bottom: 2.5rem;
-  }
+  header { margin-bottom: 2.5rem; text-align: center; }
 
   h1 {
     font-size: 1.9rem;
@@ -57,23 +48,18 @@ cat > static/index.html << 'EOF'
     letter-spacing: -0.02em;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.55rem;
   }
 
   h1 .logo-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 12px var(--accent-glow);
     flex-shrink: 0;
   }
 
-  .subtitle {
-    color: var(--text-dim);
-    font-size: 0.92rem;
-    margin-left: 1.55rem;
-  }
+  .subtitle { color: var(--text-dim); font-size: 0.92rem; }
 
   .card {
     background: var(--card);
@@ -85,9 +71,7 @@ cat > static/index.html << 'EOF'
     transition: border-color 0.2s ease;
   }
 
-  .card:hover {
-    border-color: #2c3245;
-  }
+  .card:hover { border-color: #2c3245; }
 
   .card h2 {
     font-size: 0.95rem;
@@ -105,8 +89,7 @@ cat > static/index.html << 'EOF'
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: var(--accent-glow);
     color: var(--accent);
@@ -115,7 +98,6 @@ cat > static/index.html << 'EOF'
     flex-shrink: 0;
   }
 
-  /* File input styled as a dropzone-ish row */
   input[type="file"] {
     color: var(--text-dim);
     margin-bottom: 1rem;
@@ -141,9 +123,7 @@ cat > static/index.html << 'EOF'
     transition: background 0.15s;
   }
 
-  input[type="file"]::file-selector-button:hover {
-    background: #2c3247;
-  }
+  input[type="file"]::file-selector-button:hover { background: #2c3247; }
 
   select, input[type="text"] {
     width: 100%;
@@ -163,9 +143,7 @@ cat > static/index.html << 'EOF'
     box-shadow: 0 0 0 3px var(--accent-glow);
   }
 
-  input[type="text"]::placeholder {
-    color: var(--text-faint);
-  }
+  input[type="text"]::placeholder { color: var(--text-faint); }
 
   button {
     background: linear-gradient(135deg, var(--accent), var(--accent-dim));
@@ -201,11 +179,7 @@ cat > static/index.html << 'EOF'
   .status.failed { background: var(--red-bg); color: var(--red); border-left-color: var(--red); }
   .status.info { background: var(--blue-bg); color: #79b7ff; border-left-color: #79b7ff; }
 
-  .doc-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+  .doc-list { list-style: none; padding: 0; margin: 0; }
   .doc-list li {
     padding: 0.65rem 0.25rem;
     border-bottom: 1px solid var(--card-border);
@@ -213,11 +187,16 @@ cat > static/index.html << 'EOF'
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background 0.15s;
+    gap: 0.6rem;
+    transition: background 0.15s, opacity 0.2s;
     border-radius: 6px;
   }
   .doc-list li:hover { background: rgba(255,255,255,0.02); }
   .doc-list li:last-child { border-bottom: none; }
+
+  .doc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .doc-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 
   .badge {
     font-size: 0.68rem;
@@ -231,6 +210,29 @@ cat > static/index.html << 'EOF'
   .badge.processing { background: var(--amber-bg); color: var(--amber); }
   .badge.failed { background: var(--red-bg); color: var(--red); }
 
+  .hide-btn {
+    background: transparent;
+    color: var(--text-faint);
+    border: 1px solid var(--card-border);
+    width: 22px; height: 22px;
+    padding: 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .hide-btn:hover {
+    background: var(--red-bg);
+    color: var(--red);
+    border-color: var(--red);
+    filter: none;
+  }
+
   .answer-box {
     background: #0d0f16;
     border: 1px solid var(--card-border);
@@ -242,9 +244,7 @@ cat > static/index.html << 'EOF'
     white-space: pre-wrap;
   }
 
-  .sources {
-    margin-top: 0.85rem;
-  }
+  .sources { margin-top: 0.85rem; }
 
   .source-chip {
     display: inline-block;
@@ -257,10 +257,7 @@ cat > static/index.html << 'EOF'
     border: 1px solid var(--card-border);
   }
 
-  .loading {
-    color: var(--text-faint);
-    font-size: 0.85rem;
-  }
+  .loading { color: var(--text-faint); font-size: 0.85rem; }
 
   footer {
     text-align: center;
@@ -324,11 +321,26 @@ cat > static/index.html << 'EOF'
     return `<div class="status ${kind}">${message}</div>`;
   }
 
+  function getHiddenIds() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("docuquery_hidden") || "[]"));
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function hideDoc(id) {
+    const hidden = getHiddenIds();
+    hidden.add(String(id));
+    localStorage.setItem("docuquery_hidden", JSON.stringify([...hidden]));
+  }
+
   async function loadDocuments() {
     docList.innerHTML = '<li class="loading">Loading...</li>';
     try {
       const res = await fetch(`${API_BASE}/documents`);
       const data = await res.json();
+      const hidden = getHiddenIds();
 
       if (!data.documents || data.documents.length === 0) {
         docList.innerHTML = '<li class="loading">No documents uploaded yet.</li>';
@@ -336,12 +348,25 @@ cat > static/index.html << 'EOF'
         return;
       }
 
-      docList.innerHTML = "";
+      const visibleDocs = data.documents.filter(doc => !hidden.has(String(doc.id)));
+
+      if (visibleDocs.length === 0) {
+        docList.innerHTML = '<li class="loading">No documents visible. Upload a new one.</li>';
+      } else {
+        docList.innerHTML = "";
+      }
+
       docSelect.innerHTML = '<option value="">Select a document...</option>';
 
-      data.documents.forEach(doc => {
+      visibleDocs.forEach(doc => {
         const li = document.createElement("li");
-        li.innerHTML = `<span>${doc.filename}</span><span class="badge ${doc.status}">${doc.status}</span>`;
+        li.dataset.docId = doc.id;
+        li.innerHTML = `
+          <span class="doc-name">${doc.filename}</span>
+          <span class="doc-right">
+            <span class="badge ${doc.status}">${doc.status}</span>
+            <button class="hide-btn" title="Remove from this list" data-id="${doc.id}">✕</button>
+          </span>`;
         docList.appendChild(li);
 
         if (doc.status === "ready") {
@@ -350,6 +375,14 @@ cat > static/index.html << 'EOF'
           opt.textContent = `${doc.filename} (id: ${doc.id})`;
           docSelect.appendChild(opt);
         }
+      });
+
+      docList.querySelectorAll(".hide-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const id = e.currentTarget.dataset.id;
+          hideDoc(id);
+          loadDocuments();
+        });
       });
     } catch (err) {
       docList.innerHTML = '<li class="loading">Could not load documents.</li>';
@@ -447,4 +480,3 @@ cat > static/index.html << 'EOF'
 </script>
 </body>
 </html>
-EOF
