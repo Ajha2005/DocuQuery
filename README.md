@@ -14,7 +14,7 @@ DocuQuery is a Retrieval-Augmented Generation (RAG) application that lets you up
 
 This is one half of a two-project portfolio designed to demonstrate end-to-end ML engineering across both structured and unstructured data:
 
-- **[FinSight](#)** — ML on structured data (transaction categorization, anomaly detection)
+- **[FinSight](https://github.com/Ajha2005/finsight)** — ML on structured data (transaction categorization, anomaly detection)
 - **DocuQuery** (this project) — RAG on unstructured data (PDF retrieval + LLM generation)
 
 Together they cover the two dominant data shapes in real-world ML systems, and the engineering discipline needed for each: schema design and feature engineering on one side, embeddings and retrieval pipelines on the other.
