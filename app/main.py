@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.db.init_db import init_db
+from app.models import Document, Chunk  # noqa: F401  (ensures models are registered with Base)
 
 app = FastAPI(title="DocuQuery", version="0.1.0")
 
