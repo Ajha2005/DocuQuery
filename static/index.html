@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocuQuery</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f1117;
+    color: #e6e6e6;
+    margin: 0;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: #9aa0ac;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .card {
+    background: #1a1d27;
+    border: 1px solid #2a2e3a;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .card h2 {
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+    color: #c7cad1;
+  }
+  input[type="file"] {
+    color: #e6e6e6;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  select, input[type="text"] {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #2a2e3a;
+    background: #11131a;
+    color: #e6e6e6;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+  button {
+    background: #4f7cff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: #3d68e0; }
+  button:disabled { background: #3a3f4d; cursor: not-allowed; }
+  .status {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+  }
+  .status.ready { background: #133a1f; color: #6fd98a; }
+  .status.processing { background: #3a2f13; color: #f0c66f; }
+  .status.failed { background: #3a1313; color: #f06f6f; }
+  .status.info { background: #1a2a3a; color: #6fb3f0; }
+  .doc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .doc-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #2a2e3a;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .doc-list li:last-child { border-bottom: none; }
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+  .badge.ready { background: #133a1f; color: #6fd98a; }
+  .badge.processing { background: #3a2f13; color: #f0c66f; }
+  .badge.failed { background: #3a1313; color: #f06f6f; }
+  .answer-box {
+    background: #11131a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .sources {
+    margin-top: 0.75rem;
+  }
+  .source-chip {
+    display: inline-block;
+    background: #1f2433;
+    color: #9aa0ac;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    margin: 0.2rem 0.3rem 0.2rem 0;
+  }
+  .loading {
+    color: #9aa0ac;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    color: #5a5f6b;
+    font-size: 0.8rem;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📄 DocuQuery</h1>
+  <div class="subtitle">Upload a PDF, then ask it questions in plain English.</div>
+
+  <div class="card">
+    <h2>1. Upload a document</h2>
+    <input type="file" id="fileInput" accept="application/pdf">
+    <button id="uploadBtn">Upload PDF</button>
+    <div id="uploadStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Your documents</h2>
+    <ul class="doc-list" id="docList">
+      <li class="loading">Loading...</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>3. Ask a question</h2>
+    <select id="docSelect">
+      <option value="">Select a document...</option>
+    </select>
+    <input type="text" id="questionInput" placeholder="What does this document say about...?">
+    <button id="askBtn">Ask</button>
+    <div id="queryStatus"></div>
+    <div id="answerBox"></div>
+  </div>
+
+  <footer>DocuQuery — RAG over your PDFs, powered by pgvector + Groq</footer>
+</div>
+
+<script>
+  const API_BASE = "https://docuquery-production-9d5f.up.railway.app";
+
+  const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const uploadStatus = document.getElementById("uploadStatus");
+  const docList = document.getElementById("docList");
+  const docSelect = document.getElementById("docSelect");
+  const questionInput = document.getElementById("questionInput");
+  const askBtn = document.getElementById("askBtn");
+  const queryStatus = document.getElementById("queryStatus");
+  const answerBox = document.getElementById("answerBox");
+
+  function statusEl(message, kind) {
+    return `<div class="status ${kind}">${message}</div>`;
+  }
+
+  async function loadDocuments() {
+    docList.innerHTML = '<li class="loading">Loading...</li>';
+    try {
+      const res = await fetch(`${API_BASE}/documents`);
+      const data = await res.json();
+
+      if (!data.documents || data.documents.length === 0) {
+        docList.innerHTML = '<li class="loading">No documents uploaded yet.</li>';
+        docSelect.innerHTML = '<option value="">Select a document...</option>';
+        return;
+      }
+
+      docList.innerHTML = "";
+      docSelect.innerHTML = '<option value="">Select a document...</option>';
+
+      data.documents.forEach(doc => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${doc.filename}</span><span class="badge ${doc.status}">${doc.status}</span>`;
+        docList.appendChild(li);
+
+        if (doc.status === "ready") {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = `${doc.filename} (id: ${doc.id})`;
+          docSelect.appendChild(opt);
+        }
+      });
+    } catch (err) {
+      docList.innerHTML = '<li class="loading">Could not load documents.</li>';
+    }
+  }
+
+  uploadBtn.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      uploadStatus.innerHTML = statusEl("Choose a PDF file first.", "failed");
+      return;
+    }
+
+    uploadBtn.disabled = true;
+    uploadStatus.innerHTML = statusEl("Uploading and processing...", "processing");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch(`${API_BASE}/documents`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        uploadStatus.innerHTML = statusEl(`Error: ${err.detail || "upload failed"}`, "failed");
+        return;
+      }
+
+      const doc = await res.json();
+      uploadStatus.innerHTML = statusEl(
+        `Uploaded "${doc.filename}" — status: ${doc.status} (${doc.page_count} page(s))`,
+        doc.status === "ready" ? "ready" : "processing"
+      );
+      fileInput.value = "";
+      loadDocuments();
+    } catch (err) {
+      uploadStatus.innerHTML = statusEl("Network error during upload.", "failed");
+    } finally {
+      uploadBtn.disabled = false;
+    }
+  });
+
+  askBtn.addEventListener("click", async () => {
+    const docId = docSelect.value;
+    const question = questionInput.value.trim();
+
+    if (!docId) {
+      queryStatus.innerHTML = statusEl("Select a document first.", "failed");
+      return;
+    }
+    if (!question) {
+      queryStatus.innerHTML = statusEl("Type a question first.", "failed");
+      return;
+    }
+
+    askBtn.disabled = true;
+    queryStatus.innerHTML = statusEl("Thinking...", "info");
+    answerBox.innerHTML = "";
+
+    try {
+      const res = await fetch(`${API_BASE}/documents/${docId}/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        queryStatus.innerHTML = statusEl(`Error: ${err.detail || "query failed"}`, "failed");
+        return;
+      }
+
+      const data = await res.json();
+      queryStatus.innerHTML = "";
+
+      let sourcesHtml = "";
+      if (data.sources && data.sources.length > 0) {
+        sourcesHtml = `<div class="sources">` +
+          data.sources.map(s => `<span class="source-chip">📄 Page ${s.page_number}</span>`).join("") +
+          `</div>`;
+      }
+
+      answerBox.innerHTML = `<div class="answer-box">${data.answer}</div>${sourcesHtml}`;
+    } catch (err) {
+      queryStatus.innerHTML = statusEl("Network error during query.", "failed");
+    } finally {
+      askBtn.disabled = false;
+    }
+  });
+
+  loadDocuments();
+</script>
+</body>
+</html>
