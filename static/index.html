@@ -321,6 +321,22 @@
     return `<div class="status ${kind}">${message}</div>`;
   }
 
+  // IDs of documents THIS browser uploaded
+  function getMyIds() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("docuquery_mine") || "[]"));
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function addMyId(id) {
+    const mine = getMyIds();
+    mine.add(String(id));
+    localStorage.setItem("docuquery_mine", JSON.stringify([...mine]));
+  }
+
+  // IDs this browser has chosen to hide from its own list
   function getHiddenIds() {
     try {
       return new Set(JSON.parse(localStorage.getItem("docuquery_hidden") || "[]"));
@@ -340,22 +356,20 @@
     try {
       const res = await fetch(`${API_BASE}/documents`);
       const data = await res.json();
+      const mine = getMyIds();
       const hidden = getHiddenIds();
 
-      if (!data.documents || data.documents.length === 0) {
-        docList.innerHTML = '<li class="loading">No documents uploaded yet.</li>';
+      const visibleDocs = (data.documents || []).filter(
+        doc => mine.has(String(doc.id)) && !hidden.has(String(doc.id))
+      );
+
+      if (visibleDocs.length === 0) {
+        docList.innerHTML = '<li class="loading">No documents uploaded yet from this browser.</li>';
         docSelect.innerHTML = '<option value="">Select a document...</option>';
         return;
       }
 
-      const visibleDocs = data.documents.filter(doc => !hidden.has(String(doc.id)));
-
-      if (visibleDocs.length === 0) {
-        docList.innerHTML = '<li class="loading">No documents visible. Upload a new one.</li>';
-      } else {
-        docList.innerHTML = "";
-      }
-
+      docList.innerHTML = "";
       docSelect.innerHTML = '<option value="">Select a document...</option>';
 
       visibleDocs.forEach(doc => {
@@ -415,6 +429,7 @@
       }
 
       const doc = await res.json();
+      addMyId(doc.id);
       uploadStatus.innerHTML = statusEl(
         `Uploaded "${doc.filename}" — status: ${doc.status} (${doc.page_count} page(s))`,
         doc.status === "ready" ? "ready" : "processing"
