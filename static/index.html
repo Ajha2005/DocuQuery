@@ -1,650 +1,673 @@
 <!DOCTYPE html>
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>DocuQuery | Professional RAG Interface</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind Theme Configuration -->
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-tertiary": "#00344d",
-                    "secondary-container": "#3131c0",
-                    "surface-container-high": "#222a3d",
-                    "error-container": "#93000a",
-                    "on-tertiary-fixed": "#001e2f",
-                    "inverse-on-surface": "#283044",
-                    "tertiary-fixed-dim": "#89ceff",
-                    "primary": "#adc6ff",
-                    "on-surface-variant": "#c2c6d6",
-                    "tertiary": "#89ceff",
-                    "background": "#0b1326",
-                    "tertiary-fixed": "#c9e6ff",
-                    "primary-fixed-dim": "#adc6ff",
-                    "on-surface": "#dae2fd",
-                    "inverse-primary": "#005ac2",
-                    "outline": "#8c909f",
-                    "on-primary": "#002e6a",
-                    "on-secondary": "#1000a9",
-                    "on-background": "#dae2fd",
-                    "tertiary-container": "#009ada",
-                    "on-tertiary-container": "#002d43",
-                    "secondary-fixed": "#e1e0ff",
-                    "on-primary-fixed-variant": "#004395",
-                    "on-primary-fixed": "#001a42",
-                    "secondary": "#c0c1ff",
-                    "surface-container": "#171f33",
-                    "surface-container-low": "#131b2e",
-                    "on-secondary-fixed-variant": "#2f2ebe",
-                    "surface-container-highest": "#2d3449",
-                    "on-secondary-container": "#b0b2ff",
-                    "on-error-container": "#ffdad6",
-                    "on-secondary-fixed": "#07006c",
-                    "on-tertiary-fixed-variant": "#004c6e",
-                    "error": "#ffb4ab",
-                    "outline-variant": "#424754",
-                    "primary-container": "#4d8eff",
-                    "inverse-surface": "#dae2fd",
-                    "primary-fixed": "#d8e2ff",
-                    "secondary-fixed-dim": "#c0c1ff",
-                    "surface-variant": "#2d3449",
-                    "on-primary-container": "#00285d",
-                    "surface-tint": "#adc6ff",
-                    "surface-bright": "#31394d",
-                    "surface-container-lowest": "#060e20",
-                    "surface-dim": "#0b1326",
-                    "on-error": "#690005",
-                    "surface": "#0b1326"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "md": "24px",
-                    "margin-desktop": "40px",
-                    "margin-mobile": "16px",
-                    "xl": "80px",
-                    "lg": "48px",
-                    "gutter": "24px",
-                    "base": "8px",
-                    "xs": "4px",
-                    "sm": "12px"
-            },
-            "fontFamily": {
-                    "body-md": ["Inter"],
-                    "code-md": ["Geist"],
-                    "label-sm": ["Geist"],
-                    "headline-lg-mobile": ["Hanken Grotesk"],
-                    "display-lg": ["Hanken Grotesk"],
-                    "headline-lg": ["Hanken Grotesk"]
-            },
-            "fontSize": {
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "code-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
-                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "display-lg": ["56px", {"lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
-            }
-          },
-        },
-      }
-    </script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocuQuery</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <style>
-        body {
-            background-color: #0b1326;
-            color: #dae2fd;
-            overflow-x: hidden;
-        }
+  * { box-sizing: border-box; }
 
-        .glass-card {
-            background: rgba(23, 31, 51, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
+  :root {
+    --bg-a: #0b1326;
+    --card: rgba(23, 31, 51, 0.72);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text: #dae2fd;
+    --text-dim: #c2c6d6;
+    --text-faint: #8c909f;
+    --accent: #adc6ff;
+    --accent-dim: #4d6fd6;
+    --accent-glow: rgba(173, 198, 255, 0.25);
+    --green: #5fe39b;
+    --green-bg: rgba(95, 227, 155, 0.12);
+    --amber: #f0c66f;
+    --amber-bg: rgba(240, 198, 111, 0.12);
+    --red: #f0707a;
+    --red-bg: rgba(240, 112, 122, 0.12);
+    --blue-bg: rgba(121, 183, 255, 0.12);
+  }
 
-        .glass-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+    line-height: 1;
+  }
 
-        .mesh-gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.15) 0px, transparent 50%);
-        }
+  html { background: var(--bg-a); }
 
-        .technical-accent {
-            background: linear-gradient(90deg, #adc6ff 0%, #3131c0 100%);
-        }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    margin: 0;
+    padding: 2.5rem 1.5rem 3.5rem;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.16) 0px, transparent 50%),
+      var(--bg-a);
+  }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(173, 198, 255, 0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(173, 198, 255, 0.4); }
+  .page { max-width: 1180px; margin: 0 auto; }
 
-        .doc-list li {
-            @apply flex items-center justify-between p-sm hover:bg-white/5 rounded-lg transition-colors border-b border-white/5;
-        }
+  header {
+    margin-bottom: 2.25rem;
+    text-align: center;
+  }
 
-        /* Responsive Visibility Classes */
-        @media (max-width: 767px) {
-            .desktop-only { display: none !important; }
-        }
-        @media (min-width: 768px) {
-            .mobile-only { display: none !important; }
-        }
+  h1 {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 2.2rem;
+    margin: 0 0 0.4rem 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+  }
 
-        /* Drop Zone Active State */
-        .drop-zone-active {
-            @apply border-primary bg-primary/10 ring-2 ring-primary/20;
-        }
+  h1 .logo-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    box-shadow: 0 0 16px var(--accent-glow);
+    flex-shrink: 0;
+  }
 
-        /* Upload / query status banners (mapped from original status classes) */
-        .status-banner {
-            font-size: 0.8rem;
-            margin-top: 0.75rem;
-            padding: 0.55rem 0.8rem;
-            border-radius: 8px;
-            border-left: 3px solid transparent;
-        }
-        .status-banner.ready { background: rgba(34,197,94,0.12); color: #5fe39b; border-left-color: #5fe39b; }
-        .status-banner.processing { background: rgba(240,198,111,0.12); color: #f0c66f; border-left-color: #f0c66f; }
-        .status-banner.failed { background: rgba(240,112,122,0.12); color: #f0707a; border-left-color: #f0707a; }
-        .status-banner.info { background: rgba(121,183,255,0.12); color: #79b7ff; border-left-color: #79b7ff; }
-    </style>
+  .subtitle { color: var(--text-dim); font-size: 0.95rem; }
+
+  /* ---- Side-by-side grid ---- */
+  .grid-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 340px) 1fr;
+    grid-template-areas:
+      "upload chat"
+      "docs   docs";
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .upload-card { grid-area: upload; }
+  .chat-card { grid-area: chat; }
+  .docs-card { grid-area: docs; }
+
+  @media (max-width: 900px) {
+    .grid-layout {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "upload"
+        "chat"
+        "docs";
+    }
+  }
+
+  /* Glass card */
+  .card {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 1.6rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 45%, rgba(255,255,255,0) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .card:hover { border-color: rgba(173, 198, 255, 0.3); }
+
+  .card h2 {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 1.05rem;
+    margin: 0 0 1.1rem 0;
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.1rem;
+    gap: 0.75rem;
+  }
+  .card-header-row h2 { margin: 0; }
+
+  .pill {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+  .step-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(173,198,255,0.22), rgba(77,111,214,0.18));
+    color: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 15px rgba(173,198,255,0.15);
+  }
+  .step-icon .material-symbols-outlined { font-size: 19px; }
+
+  .card-desc {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin: 0 0 1.25rem 0;
+  }
+
+  /* Upload card fills column height, drop zone pinned to bottom */
+  .upload-card { min-height: 420px; }
+  .upload-card .upload-controls { margin-top: auto; }
+
+  input[type="file"] {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    display: block;
+    font-size: 0.88rem;
+    width: 100%;
+    padding: 1.4rem 1rem;
+    border: 1.5px dashed rgba(255,255,255,0.18);
+    border-radius: 14px;
+    background: rgba(6, 14, 32, 0.5);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  input[type="file"]:hover {
+    border-color: rgba(173, 198, 255, 0.45);
+    background: rgba(173, 198, 255, 0.05);
+  }
+  input[type="file"]::file-selector-button {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    margin-right: 0.85rem;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  input[type="file"]::file-selector-button:hover { background: rgba(255,255,255,0.15); }
+
+  select, input[type="text"] {
+    width: 100%;
+    padding: 0.8rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(6, 14, 32, 0.55);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  select { margin-bottom: 0.9rem; }
+
+  select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  input[type="text"]::placeholder { color: var(--text-faint); }
+
+  button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: #001a42;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 4px 18px var(--accent-glow);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  button:hover { filter: brightness(1.08); box-shadow: 0 6px 22px var(--accent-glow); }
+  button:active { transform: translateY(1px); }
+  button:disabled {
+    background: rgba(255,255,255,0.08);
+    color: var(--text-faint);
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: none;
+  }
+
+  .status {
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 10px;
+    border-left: 3px solid transparent;
+  }
+  .status.ready { background: var(--green-bg); color: var(--green); border-left-color: var(--green); }
+  .status.processing { background: var(--amber-bg); color: var(--amber); border-left-color: var(--amber); }
+  .status.failed { background: var(--red-bg); color: var(--red); border-left-color: var(--red); }
+  .status.info { background: var(--blue-bg); color: #79b7ff; border-left-color: #79b7ff; }
+
+  /* ---- Chat-style Ask card ---- */
+  .chat-card { min-height: 420px; }
+
+  .chat-area {
+    flex: 1;
+    min-height: 180px;
+    max-height: 360px;
+    overflow-y: auto;
+    background: rgba(6, 14, 32, 0.45);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .chat-area:empty::before,
+  .chat-area .chat-placeholder {
+    content: "";
+    color: var(--text-faint);
+    font-size: 0.85rem;
+    margin: auto;
+  }
+
+  .composer {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .composer input[type="text"] { margin-bottom: 0; flex: 1; }
+  .composer button { padding: 0.8rem 1.1rem; flex-shrink: 0; }
+
+  .answer-box {
+    background: rgba(173, 198, 255, 0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 1.1rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+
+  .sources { margin-top: 0.9rem; }
+
+  .source-chip {
+    display: inline-block;
+    background: rgba(173, 198, 255, 0.08);
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 8px;
+    margin: 0.2rem 0.35rem 0.2rem 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* ---- Documents card ---- */
+  .doc-list { list-style: none; padding: 0; margin: 0; }
+  .doc-list li {
+    padding: 0.75rem 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    transition: background 0.15s, opacity 0.2s;
+    border-radius: 10px;
+  }
+  .doc-list li:hover { background: rgba(255,255,255,0.04); }
+  .doc-list li:last-child { border-bottom: none; }
+
+  .doc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .doc-name::before {
+    font-family: 'Material Symbols Outlined';
+    content: "picture_as_pdf";
+    margin-right: 0.55rem;
+    color: var(--accent);
+    font-size: 1.05rem;
+    vertical-align: middle;
+    font-variation-settings: 'FILL' 1;
+  }
+
+  .doc-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .badge.ready { background: var(--green-bg); color: var(--green); }
+  .badge.processing { background: var(--amber-bg); color: var(--amber); }
+  .badge.failed { background: var(--red-bg); color: var(--red); }
+
+  .hide-btn {
+    background: rgba(255,255,255,0.04);
+    color: var(--text-faint);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 24px; height: 24px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .hide-btn:hover {
+    background: var(--red-bg);
+    color: var(--red);
+    border-color: rgba(240, 112, 122, 0.4);
+    filter: none;
+  }
+
+  .loading { color: var(--text-faint); font-size: 0.85rem; }
+
+  footer {
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.8rem;
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+</style>
 </head>
-<body class="font-body-md text-body-md min-h-screen flex flex-col">
-<div class="mesh-gradient-bg"></div>
-<!-- Desktop NavBar -->
-<header class="desktop-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-margin-desktop h-20 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
-<div class="flex items-center gap-md">
-<span class="font-display-lg text-4xl font-black tracking-tighter text-primary">DocuQuery</span>
+<body>
+<div class="page">
+  <header>
+    <h1><span class="logo-dot"></span>DocuQuery</h1>
+    <div class="subtitle">Upload a PDF, then ask it questions in plain English.</div>
+  </header>
+
+  <div class="grid-layout">
+    <!-- Left: Upload -->
+    <div class="card upload-card">
+      <h2><span class="step-icon"><span class="material-symbols-outlined">upload_file</span></span>Upload a document</h2>
+      <p class="card-desc">Upload your PDF documents to start querying. We process and vectorize your content for efficient retrieval.</p>
+      <div class="upload-controls">
+        <input type="file" id="fileInput" accept="application/pdf">
+        <button id="uploadBtn"><span class="material-symbols-outlined" style="font-size:18px;">cloud_upload</span>Upload PDF</button>
+        <div id="uploadStatus"></div>
+      </div>
+    </div>
+
+    <!-- Right: Ask (chat-style) -->
+    <div class="card chat-card">
+      <div class="card-header-row">
+        <h2><span class="step-icon"><span class="material-symbols-outlined">psychology</span></span>Ask a question</h2>
+        <span class="pill"><span class="dot"></span>Ready</span>
+      </div>
+      <select id="docSelect">
+        <option value="">Select a document...</option>
+      </select>
+      <div class="chat-area" id="chatArea">
+        <div id="queryStatus"></div>
+        <div id="answerBox"></div>
+      </div>
+      <div class="composer">
+        <input type="text" id="questionInput" placeholder="What does this document say about...?">
+        <button id="askBtn"><span class="material-symbols-outlined" style="font-size:18px;">send</span></button>
+      </div>
+    </div>
+
+    <!-- Bottom: Documents (full width) -->
+    <div class="card docs-card">
+      <h2><span class="step-icon"><span class="material-symbols-outlined">description</span></span>Your documents</h2>
+      <ul class="doc-list" id="docList">
+        <li class="loading">Loading...</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>DocuQuery — RAG over your PDFs, powered by pgvector + Groq</footer>
 </div>
-<div class="flex items-center gap-sm">
-<button id="new-query-btn" class="technical-accent text-on-primary font-body-md text-body-md px-lg py-sm rounded-xl font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg">
-                New Query
-            </button>
-</div>
-</header>
-<!-- Mobile NavBar -->
-<header class="mobile-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-center px-margin-mobile h-16 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
-<div class="flex items-center gap-2">
-<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-xl" data-icon="description">description</span>
-</div>
-<span class="font-display-lg text-xl font-bold tracking-tight text-primary">DocuQuery AI</span>
-</div>
-</header>
-<!-- Main Content -->
-<main class="flex-grow pt-24 md:pt-32 pb-xl px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Ingest Document Card -->
-<section class="md:col-span-12 lg:col-span-4 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md flex flex-col gap-md h-full">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(173,198,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Ingest Document</h2>
-</div>
-<p class="text-on-surface-variant font-body-md text-body-md">
-                        Upload your PDF documents to start querying. We process and vectorize your content for efficient retrieval.
-                    </p>
-<div class="mt-auto">
-<label class="flex flex-col items-center justify-center w-full h-36 md:h-48 border-2 border-dashed border-outline-variant rounded-xl cursor-pointer bg-surface-container-low/50 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all group" id="drop-zone">
-<div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors mb-sm text-4xl" data-icon="cloud_upload">cloud_upload</span>
-<p class="mb-xs font-body-md text-body-md text-on-surface">Drop PDFs here or tap</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">PDF files only</p>
-</div>
-<input accept="application/pdf" class="hidden" id="file-upload" multiple="" type="file"/>
-</label>
-<div id="upload-status"></div>
-</div>
-</div>
-</section>
-<!-- Analysis Engine Card -->
-<section class="md:col-span-12 lg:col-span-8 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md flex flex-col h-[500px] md:h-full">
-<div class="flex items-center justify-between mb-lg">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center text-tertiary shadow-[0_0_15px_rgba(137,206,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Analysis Engine</h2>
-</div>
-<div class="flex gap-xs">
-<span class="px-sm py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-[10px] md:text-xs font-medium flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Vector DB Online
-                            </span>
-</div>
-</div>
-<div class="flex-grow flex flex-col bg-surface-container-lowest/50 rounded-xl border border-white/5 p-md overflow-hidden relative">
-<div class="flex-grow overflow-y-auto pr-sm space-y-md custom-scrollbar" id="chat-messages">
-<!-- Populated via JS -->
-</div>
-<div class="mt-lg relative">
-<input class="w-full bg-surface-container-highest border border-white/10 rounded-xl px-4 md:px-lg py-md pr-20 md:pr-24 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm md:text-on-surface placeholder:text-on-surface-variant" id="query-input" placeholder="Select a document below, then ask a question..." type="text"/>
-<div class="absolute right-2 top-2 bottom-2 flex gap-1">
-<button class="technical-accent text-on-primary rounded-lg px-2 md:px-md flex items-center justify-center active:scale-95 transition-transform" id="send-query">
-<span class="material-symbols-outlined text-lg" data-icon="send">send</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Your Documents Card -->
-<section class="md:col-span-12 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md">
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-lg gap-4">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center text-secondary shadow-[0_0_15px_rgba(192,193,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="description">description</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Your Documents</h2>
-</div>
-<div class="flex gap-sm">
-<div class="relative w-full md:w-64">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm" data-icon="search">search</span>
-<input class="w-full bg-surface-container-low border border-white/10 rounded-full pl-9 pr-md py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50" id="doc-search" placeholder="Search docs..." type="text"/>
-</div>
-</div>
-</div>
-<p class="text-on-surface-variant text-xs mb-sm">Click a "ready" document to select it for querying above.</p>
-<div class="min-h-[200px]">
-<ul class="doc-list space-y-2" id="document-list">
-<li class="p-md text-center text-on-surface-variant opacity-50 italic">Loading documents...</li>
-</ul>
-</div>
-</div>
-</section>
-</div>
-</main>
-<!-- Desktop Footer -->
-<footer class="desktop-only mt-auto bg-background border-t border-white/5 py-lg px-margin-desktop w-full flex flex-col justify-center items-center gap-md">
-<div class="flex flex-col gap-xs items-center w-full">
-<p class="font-label-sm text-label-sm text-on-surface-variant">DocuQuery — RAG over your PDFs, powered by pgvector + Groq</p>
-</div>
-</footer>
+
 <script>
-    // ============================================================
-    // Backend configuration — DO NOT replace with fake/simulated logic
-    // ============================================================
-    const API_BASE = "https://docuquery-production-9d5f.up.railway.app";
+  const API_BASE = "https://docuquery-production-9d5f.up.railway.app";
 
-    const fileUpload = document.getElementById('file-upload');
-    const dropZone = document.getElementById('drop-zone');
-    const uploadStatusEl = document.getElementById('upload-status');
-    const docSearch = document.getElementById('doc-search');
-    const documentListEl = document.getElementById('document-list');
-    const sendQueryBtn = document.getElementById('send-query');
-    const queryInput = document.getElementById('query-input');
-    const chatMessages = document.getElementById('chat-messages');
-    const newQueryBtn = document.getElementById('new-query-btn');
+  const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const uploadStatus = document.getElementById("uploadStatus");
+  const docList = document.getElementById("docList");
+  const docSelect = document.getElementById("docSelect");
+  const questionInput = document.getElementById("questionInput");
+  const askBtn = document.getElementById("askBtn");
+  const queryStatus = document.getElementById("queryStatus");
+  const answerBox = document.getElementById("answerBox");
 
-    let allDocuments = [];      // raw list from GET /documents
-    let selectedDocId = null;   // currently selected document for querying
-    let msgCounter = 0;
+  function statusEl(message, kind) {
+    return `<div class="status ${kind}">${message}</div>`;
+  }
 
-    // ---- localStorage helpers (same keys as production) ----
-    function getMyIds() {
-        try { return new Set(JSON.parse(localStorage.getItem('docuquery_mine') || '[]')); }
-        catch (e) { return new Set(); }
+  // IDs of documents THIS browser uploaded
+  function getMyIds() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("docuquery_mine") || "[]"));
+    } catch (e) {
+      return new Set();
     }
-    function addMyId(id) {
-        const mine = getMyIds();
-        mine.add(String(id));
-        localStorage.setItem('docuquery_mine', JSON.stringify([...mine]));
-    }
-    function getHiddenIds() {
-        try { return new Set(JSON.parse(localStorage.getItem('docuquery_hidden') || '[]')); }
-        catch (e) { return new Set(); }
-    }
-    function hideDoc(id) {
-        const hidden = getHiddenIds();
-        hidden.add(String(id));
-        localStorage.setItem('docuquery_hidden', JSON.stringify([...hidden]));
-    }
+  }
 
-    // ---- Upload status banner ----
-    function showUploadStatus(message, kind) {
-        uploadStatusEl.innerHTML = `<div class="status-banner ${kind}">${message}</div>`;
-    }
+  function addMyId(id) {
+    const mine = getMyIds();
+    mine.add(String(id));
+    localStorage.setItem("docuquery_mine", JSON.stringify([...mine]));
+  }
 
-    // ---- Document list rendering ----
-    function statusBadgeClasses(status) {
-        switch (status) {
-            case 'ready': return 'bg-green-500/20 text-green-400';
-            case 'processing': return 'bg-tertiary/20 text-tertiary animate-pulse';
-            case 'failed': return 'bg-error/20 text-error';
-            default: return 'bg-surface-container-highest text-on-surface-variant';
+  // IDs this browser has chosen to hide from its own list
+  function getHiddenIds() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem("docuquery_hidden") || "[]"));
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function hideDoc(id) {
+    const hidden = getHiddenIds();
+    hidden.add(String(id));
+    localStorage.setItem("docuquery_hidden", JSON.stringify([...hidden]));
+  }
+
+  async function loadDocuments() {
+    docList.innerHTML = '<li class="loading">Loading...</li>';
+    try {
+      const res = await fetch(`${API_BASE}/documents`);
+      const data = await res.json();
+      const mine = getMyIds();
+      const hidden = getHiddenIds();
+
+      const visibleDocs = (data.documents || []).filter(
+        doc => mine.has(String(doc.id)) && !hidden.has(String(doc.id))
+      );
+
+      if (visibleDocs.length === 0) {
+        docList.innerHTML = '<li class="loading">No documents uploaded yet from this browser.</li>';
+        docSelect.innerHTML = '<option value="">Select a document...</option>';
+        return;
+      }
+
+      docList.innerHTML = "";
+      docSelect.innerHTML = '<option value="">Select a document...</option>';
+
+      visibleDocs.forEach(doc => {
+        const li = document.createElement("li");
+        li.dataset.docId = doc.id;
+        li.innerHTML = `
+          <span class="doc-name">${doc.filename}</span>
+          <span class="doc-right">
+            <span class="badge ${doc.status}">${doc.status}</span>
+            <button class="hide-btn" title="Remove from this list" data-id="${doc.id}">✕</button>
+          </span>`;
+        docList.appendChild(li);
+
+        if (doc.status === "ready") {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = `${doc.filename} (id: ${doc.id})`;
+          docSelect.appendChild(opt);
         }
-    }
+      });
 
-    function renderDocumentList() {
-        const mine = getMyIds();
-        const hidden = getHiddenIds();
-        const searchTerm = (docSearch?.value || '').toLowerCase();
-
-        const visibleDocs = allDocuments.filter(doc =>
-            mine.has(String(doc.id)) &&
-            !hidden.has(String(doc.id)) &&
-            (doc.filename || '').toLowerCase().includes(searchTerm)
-        );
-
-        if (visibleDocs.length === 0) {
-            documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">No documents uploaded yet from this browser.</li>';
-            return;
-        }
-
-        documentListEl.innerHTML = visibleDocs.map(doc => {
-            const isSelected = String(doc.id) === String(selectedDocId);
-            const isReady = doc.status === 'ready';
-            return `
-                <li class="group transition-colors border-b border-white/5 p-sm flex items-center justify-between rounded-lg ${isSelected ? 'bg-primary/10 ring-1 ring-primary/40' : 'hover:bg-white/5'} ${isReady ? 'cursor-pointer' : ''}" data-id="${doc.id}" data-ready="${isReady}">
-                    <div class="flex items-center gap-sm overflow-hidden">
-                        <span class="material-symbols-outlined text-primary shrink-0" data-icon="picture_as_pdf">picture_as_pdf</span>
-                        <div class="truncate">
-                            <span class="text-on-surface font-medium block truncate doc-filename"></span>
-                            <span class="text-[10px] md:text-xs text-on-surface-variant">${doc.page_count ? doc.page_count + ' page(s)' : ''}${isSelected ? ' • Selected for querying' : ''}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 md:gap-md shrink-0">
-                        <span class="px-2 py-0.5 rounded-full ${statusBadgeClasses(doc.status)} text-[8px] md:text-[10px] font-bold uppercase tracking-wider">${doc.status}</span>
-                        <div class="flex gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="hide-doc-btn p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant" data-id="${doc.id}" title="Remove from this list">
-                                <span class="material-symbols-outlined text-sm">visibility_off</span>
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            `;
-        }).join('');
-
-        // Fill filenames via textContent to avoid HTML injection from filenames
-        documentListEl.querySelectorAll('li[data-id]').forEach(li => {
-            const doc = visibleDocs.find(d => String(d.id) === li.dataset.id);
-            const nameEl = li.querySelector('.doc-filename');
-            if (doc && nameEl) nameEl.textContent = doc.filename;
+      docList.querySelectorAll(".hide-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const id = e.currentTarget.dataset.id;
+          hideDoc(id);
+          loadDocuments();
         });
+      });
+    } catch (err) {
+      docList.innerHTML = '<li class="loading">Could not load documents.</li>';
+    }
+  }
 
-        documentListEl.querySelectorAll('.hide-doc-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = e.currentTarget.dataset.id;
-                hideDoc(id);
-                if (String(selectedDocId) === String(id)) selectedDocId = null;
-                renderDocumentList();
-                updateQueryPlaceholder();
-            });
-        });
-
-        documentListEl.querySelectorAll('li[data-ready="true"]').forEach(li => {
-            li.addEventListener('click', () => {
-                selectedDocId = li.dataset.id;
-                renderDocumentList();
-                updateQueryPlaceholder();
-            });
-        });
+  uploadBtn.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      uploadStatus.innerHTML = statusEl("Choose a PDF file first.", "failed");
+      return;
     }
 
-    function updateQueryPlaceholder() {
-        const doc = allDocuments.find(d => String(d.id) === String(selectedDocId));
-        queryInput.placeholder = doc
-            ? `Ask something about "${doc.filename}"...`
-            : 'Select a document below, then ask a question...';
+    uploadBtn.disabled = true;
+    uploadStatus.innerHTML = statusEl("Uploading and processing...", "processing");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch(`${API_BASE}/documents`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        uploadStatus.innerHTML = statusEl(`Error: ${err.detail || "upload failed"}`, "failed");
+        return;
+      }
+
+      const doc = await res.json();
+      addMyId(doc.id);
+      uploadStatus.innerHTML = statusEl(
+        `Uploaded "${doc.filename}" — status: ${doc.status} (${doc.page_count} page(s))`,
+        doc.status === "ready" ? "ready" : "processing"
+      );
+      fileInput.value = "";
+      loadDocuments();
+    } catch (err) {
+      uploadStatus.innerHTML = statusEl("Network error during upload.", "failed");
+    } finally {
+      uploadBtn.disabled = false;
+    }
+  });
+
+  askBtn.addEventListener("click", async () => {
+    const docId = docSelect.value;
+    const question = questionInput.value.trim();
+
+    if (!docId) {
+      queryStatus.innerHTML = statusEl("Select a document first.", "failed");
+      return;
+    }
+    if (!question) {
+      queryStatus.innerHTML = statusEl("Type a question first.", "failed");
+      return;
     }
 
-    async function loadDocuments() {
-        documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">Loading documents...</li>';
-        try {
-            const res = await fetch(`${API_BASE}/documents`);
-            const data = await res.json();
-            allDocuments = data.documents || [];
+    askBtn.disabled = true;
+    queryStatus.innerHTML = statusEl("Thinking...", "info");
+    answerBox.innerHTML = "";
 
-            // Deselect if the previously selected doc disappeared or is no longer ready
-            if (selectedDocId && !allDocuments.some(d => String(d.id) === String(selectedDocId) && d.status === 'ready')) {
-                selectedDocId = null;
-            }
-            renderDocumentList();
-            updateQueryPlaceholder();
-        } catch (err) {
-            documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">Could not load documents.</li>';
-        }
+    try {
+      const res = await fetch(`${API_BASE}/documents/${docId}/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        queryStatus.innerHTML = statusEl(`Error: ${err.detail || "query failed"}`, "failed");
+        return;
+      }
+
+      const data = await res.json();
+      queryStatus.innerHTML = "";
+
+      let sourcesHtml = "";
+      if (data.sources && data.sources.length > 0) {
+        sourcesHtml = `<div class="sources">` +
+          data.sources.map(s => `<span class="source-chip">📄 Page ${s.page_number}</span>`).join("") +
+          `</div>`;
+      }
+
+      answerBox.innerHTML = `<div class="answer-box">${data.answer}</div>${sourcesHtml}`;
+    } catch (err) {
+      queryStatus.innerHTML = statusEl("Network error during query.", "failed");
+    } finally {
+      askBtn.disabled = false;
     }
+  });
 
-    // ---- Real upload logic (replaces the fake setTimeout simulation) ----
-    async function handleFiles(files) {
-        const filesArray = Array.from(files);
-        for (const file of filesArray) {
-            if (file.type !== 'application/pdf') {
-                showUploadStatus(`Skipped "${file.name}" — only PDF files are supported.`, 'failed');
-                continue;
-            }
-
-            showUploadStatus(`Uploading "${file.name}"...`, 'processing');
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const res = await fetch(`${API_BASE}/documents`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
-                    showUploadStatus(`Error uploading "${file.name}": ${err.detail || 'upload failed'}`, 'failed');
-                    continue;
-                }
-
-                const doc = await res.json();
-                addMyId(doc.id);
-                showUploadStatus(
-                    `Uploaded "${doc.filename}" — status: ${doc.status}${doc.page_count ? ` (${doc.page_count} page(s))` : ''}`,
-                    doc.status === 'ready' ? 'ready' : 'processing'
-                );
-                loadDocuments();
-            } catch (err) {
-                showUploadStatus(`Network error uploading "${file.name}".`, 'failed');
-            }
-        }
-    }
-
-    // ---- Chat / query UI helpers ----
-    function appendUserMessage(text) {
-        const div = document.createElement('div');
-        div.className = 'flex items-start gap-md justify-end';
-        div.innerHTML = `
-            <div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
-                <p class="font-body-md text-sm md:text-body-md text-on-surface"></p>
-            </div>
-            <div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-                <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
-            </div>`;
-        div.querySelector('p').textContent = text;
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function appendAiMessage(text, isThinking = false) {
-        msgCounter++;
-        const id = 'ai-msg-' + msgCounter;
-        const div = document.createElement('div');
-        div.className = 'flex items-start gap-md';
-        div.id = id;
-        div.innerHTML = `
-            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
-                <span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
-            </div>
-            <div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
-                <p class="font-body-md text-sm md:text-body-md text-on-surface msg-text ${isThinking ? 'italic opacity-60' : ''}"></p>
-                <div class="msg-extra"></div>
-            </div>`;
-        div.querySelector('.msg-text').textContent = text;
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        return id;
-    }
-
-    function replaceMessage(id, text, extraHtml = '') {
-        const div = document.getElementById(id);
-        if (!div) return;
-        const p = div.querySelector('.msg-text');
-        p.textContent = text;
-        p.classList.remove('italic', 'opacity-60');
-        const extra = div.querySelector('.msg-extra');
-        if (extra) extra.innerHTML = extraHtml;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    // ---- Real query logic (replaces the fake chat simulation) ----
-    async function sendQuery() {
-        const question = queryInput.value.trim();
-
-        if (!selectedDocId) {
-            appendAiMessage('Please select a "ready" document from "Your Documents" below before asking a question.');
-            return;
-        }
-        if (!question) return;
-
-        appendUserMessage(question);
-        queryInput.value = '';
-
-        const thinkingId = appendAiMessage('Thinking...', true);
-
-        try {
-            const res = await fetch(`${API_BASE}/documents/${selectedDocId}/query`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question })
-            });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                replaceMessage(thinkingId, `Error: ${err.detail || 'query failed'}`);
-                return;
-            }
-
-            const data = await res.json();
-            let sourcesHtml = '';
-            if (data.sources && data.sources.length > 0) {
-                sourcesHtml = `<div class="flex flex-wrap gap-1 mt-2">` +
-                    data.sources.map(s => `<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded-full border border-white/10">📄 Page ${s.page_number}</span>`).join('') +
-                    `</div>`;
-            }
-            replaceMessage(thinkingId, data.answer, sourcesHtml);
-        } catch (err) {
-            replaceMessage(thinkingId, 'Network error during query.');
-        }
-    }
-
-    function resetConversation() {
-        chatMessages.innerHTML = '';
-        selectedDocId = null;
-        renderDocumentList();
-        updateQueryPlaceholder();
-        appendAiMessage("Hello! I'm DocuQuery AI. Select a document below, then ask me anything about it.");
-    }
-
-    // ---- Wiring ----
-    window.addEventListener('DOMContentLoaded', () => {
-        if (fileUpload) {
-            fileUpload.addEventListener('change', (e) => {
-                handleFiles(e.target.files);
-                fileUpload.value = '';
-            });
-        }
-
-        if (dropZone) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }, false);
-            });
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => {
-                    dropZone.classList.add('drop-zone-active');
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, () => {
-                    dropZone.classList.remove('drop-zone-active');
-                }, false);
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                const dt = e.dataTransfer;
-                handleFiles(dt.files);
-            }, false);
-        }
-
-        if (docSearch) {
-            docSearch.addEventListener('input', renderDocumentList);
-        }
-
-        if (sendQueryBtn && queryInput) {
-            sendQueryBtn.addEventListener('click', sendQuery);
-            queryInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendQuery();
-            });
-        }
-
-        if (newQueryBtn) {
-            newQueryBtn.addEventListener('click', resetConversation);
-        }
-
-        // Global button press feedback (cosmetic, from the new UI)
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('mousedown', () => button.classList.add('scale-95'));
-            button.addEventListener('mouseup', () => button.classList.remove('scale-95'));
-            button.addEventListener('mouseleave', () => button.classList.remove('scale-95'));
-        });
-
-        // Initial load
-        appendAiMessage("Hello! I'm DocuQuery AI. Select a document below, then ask me anything about it.");
-        loadDocuments();
-    });
+  loadDocuments();
 </script>
-</body></html>
+</body>
+</html>
