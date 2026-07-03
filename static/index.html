@@ -1,497 +1,859 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>DocuQuery | Professional RAG Interface</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<!-- Tailwind Theme Configuration -->
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-tertiary": "#00344d",
-                    "secondary-container": "#3131c0",
-                    "surface-container-high": "#222a3d",
-                    "error-container": "#93000a",
-                    "on-tertiary-fixed": "#001e2f",
-                    "inverse-on-surface": "#283044",
-                    "tertiary-fixed-dim": "#89ceff",
-                    "primary": "#adc6ff",
-                    "on-surface-variant": "#c2c6d6",
-                    "tertiary": "#89ceff",
-                    "background": "#0b1326",
-                    "tertiary-fixed": "#c9e6ff",
-                    "primary-fixed-dim": "#adc6ff",
-                    "on-surface": "#dae2fd",
-                    "inverse-primary": "#005ac2",
-                    "outline": "#8c909f",
-                    "on-primary": "#002e6a",
-                    "on-secondary": "#1000a9",
-                    "on-background": "#dae2fd",
-                    "tertiary-container": "#009ada",
-                    "on-tertiary-container": "#002d43",
-                    "secondary-fixed": "#e1e0ff",
-                    "on-primary-fixed-variant": "#004395",
-                    "on-primary-fixed": "#001a42",
-                    "secondary": "#c0c1ff",
-                    "surface-container": "#171f33",
-                    "surface-container-low": "#131b2e",
-                    "on-secondary-fixed-variant": "#2f2ebe",
-                    "surface-container-highest": "#2d3449",
-                    "on-secondary-container": "#b0b2ff",
-                    "on-error-container": "#ffdad6",
-                    "on-secondary-fixed": "#07006c",
-                    "on-tertiary-fixed-variant": "#004c6e",
-                    "error": "#ffb4ab",
-                    "outline-variant": "#424754",
-                    "primary-container": "#4d8eff",
-                    "inverse-surface": "#dae2fd",
-                    "primary-fixed": "#d8e2ff",
-                    "secondary-fixed-dim": "#c0c1ff",
-                    "surface-variant": "#2d3449",
-                    "on-primary-container": "#00285d",
-                    "surface-tint": "#adc6ff",
-                    "surface-bright": "#31394d",
-                    "surface-container-lowest": "#060e20",
-                    "surface-dim": "#0b1326",
-                    "on-error": "#690005",
-                    "surface": "#0b1326"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "md": "24px",
-                    "margin-desktop": "40px",
-                    "margin-mobile": "16px",
-                    "xl": "80px",
-                    "lg": "48px",
-                    "gutter": "24px",
-                    "base": "8px",
-                    "xs": "4px",
-                    "sm": "12px"
-            },
-            "fontFamily": {
-                    "body-md": ["Inter"],
-                    "code-md": ["Geist"],
-                    "label-sm": ["Geist"],
-                    "headline-lg-mobile": ["Hanken Grotesk"],
-                    "display-lg": ["Hanken Grotesk"],
-                    "headline-lg": ["Hanken Grotesk"]
-            },
-            "fontSize": {
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "code-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
-                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "display-lg": ["56px", {"lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
-            }
-          },
-        },
-      }
-    </script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocuQuery</title>
 <style>
-        body {
-            background-color: #0b1326;
-            color: #dae2fd;
-            overflow-x: hidden;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .glass-card {
-            background: rgba(23, 31, 51, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
+  :root {
+    --bg: #0d1117;
+    --nav: #0d1117;
+    --panel: #161b27;
+    --panel-border: #1e2536;
+    --input-bg: #1e2536;
+    --text: #e6eaf2;
+    --text-dim: #7a839a;
+    --text-faint: #3e4558;
+    --accent: #4f7bff;
+    --accent-dim: #3460d8;
+    --accent-glow: rgba(79, 123, 255, 0.2);
+    --green: #3dd68c;
+    --green-bg: #0d2e1e;
+    --amber: #f0c66f;
+    --amber-bg: #3a2f13;
+    --red: #f0707a;
+    --red-bg: #391419;
+    --blue-bg: #102038;
+    --bubble-ai: #1a2236;
+    --bubble-user: #1e3a6e;
+  }
 
-        .glass-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
 
-        .mesh-gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.15) 0px, transparent 50%);
-        }
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    height: 56px;
+    border-bottom: 1px solid var(--panel-border);
+    flex-shrink: 0;
+    background: var(--nav);
+  }
 
-        .technical-accent {
-            background: linear-gradient(90deg, #adc6ff 0%, #3131c0 100%);
-        }
+  .nav-logo {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
+  .nav-logo .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(173, 198, 255, 0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(173, 198, 255, 0.4); }
+  .nav-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: white;
+    border: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transition: filter 0.15s;
+  }
+  .nav-btn:hover { filter: brightness(1.1); }
 
-        .doc-list li {
-            @apply flex items-center justify-between p-sm hover:bg-white/5 rounded-lg transition-colors border-b border-white/5;
-        }
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
 
-        /* Responsive Visibility Classes */
-        @media (max-width: 767px) {
-            .desktop-only { display: none !important; }
-        }
-        @media (min-width: 768px) {
-            .mobile-only { display: none !important; }
-        }
-    </style>
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    width: 340px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--panel-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-section {
+    padding: 1.25rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .panel-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin-bottom: 0.6rem;
+  }
+
+  .panel-label svg {
+    opacity: 0.6;
+  }
+
+  .panel-desc {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  /* dropzone */
+  .dropzone {
+    border: 1.5px dashed var(--panel-border);
+    border-radius: 10px;
+    padding: 2rem 1rem;
+    text-align: center;
+    background: #0d1117;
+    margin-bottom: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .dropzone:hover { border-color: var(--accent); }
+
+  .dropzone svg { opacity: 0.4; margin-bottom: 0.6rem; }
+
+  .dropzone p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 0.2rem;
+  }
+
+  .dropzone small {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .upload-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .file-label {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: border-color 0.15s;
+  }
+  .file-label:hover { border-color: var(--accent); }
+
+  .upload-action-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px var(--accent-glow);
+    transition: filter 0.15s, transform 0.1s;
+  }
+  .upload-action-btn:hover { filter: brightness(1.1); }
+  .upload-action-btn:active { transform: translateY(1px); }
+  .upload-action-btn:disabled { background: #2a2e3a; box-shadow: none; filter: none; cursor: not-allowed; }
+
+  .format-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    margin-top: 0.6rem;
+  }
+
+  /* status */
+  .status {
+    font-size: 0.8rem;
+    margin-top: 0.6rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 7px;
+    border-left: 3px solid transparent;
+  }
+  .status.ready { background: var(--green-bg); color: var(--green); border-left-color: var(--green); }
+  .status.processing { background: var(--amber-bg); color: var(--amber); border-left-color: var(--amber); }
+  .status.failed { background: var(--red-bg); color: var(--red); border-left-color: var(--red); }
+  .status.info { background: var(--blue-bg); color: #79b7ff; border-left-color: #79b7ff; }
+
+  /* your docs */
+  .docs-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1rem 1.25rem 0;
+  }
+
+  .docs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 7px;
+    padding: 0.35rem 0.6rem;
+    gap: 0.4rem;
+  }
+
+  .search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 0.8rem;
+    width: 140px;
+  }
+
+  .search-box input::placeholder { color: var(--text-faint); }
+
+  .doc-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 1rem;
+  }
+
+  .doc-list::-webkit-scrollbar { width: 4px; }
+  .doc-list::-webkit-scrollbar-track { background: transparent; }
+  .doc-list::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+
+  .doc-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .doc-list li:last-child { border-bottom: none; }
+  .doc-list li:hover { background: rgba(255,255,255,0.03); }
+
+  .doc-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--input-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .doc-info { flex: 1; overflow: hidden; }
+  .doc-info .doc-name {
+    font-size: 0.83rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .badge.ready { background: var(--green-bg); color: var(--green); }
+  .badge.processing { background: var(--amber-bg); color: var(--amber); }
+  .badge.failed { background: var(--red-bg); color: var(--red); }
+
+  .hide-btn {
+    background: transparent;
+    color: var(--text-faint);
+    border: 1px solid var(--panel-border);
+    width: 20px; height: 20px;
+    padding: 0;
+    border-radius: 5px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .hide-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); filter: none; }
+
+  .loading { color: var(--text-faint); font-size: 0.82rem; padding: 0.5rem; }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .chat-header {
+    padding: 0 1.5rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--panel-border);
+    flex-shrink: 0;
+  }
+
+  .chat-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-dot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--green);
+    background: var(--green-bg);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+  }
+
+  .status-dot::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+  }
+
+  /* chat messages */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 4px; }
+
+  .msg {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 80%;
+  }
+
+  .msg.ai { align-self: flex-start; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--input-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+  }
+
+  .msg-bubble {
+    background: var(--bubble-ai);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    border: 1px solid var(--panel-border);
+    white-space: pre-wrap;
+  }
+
+  .msg.user .msg-bubble {
+    background: var(--bubble-user);
+    border-color: #2a4a8a;
+  }
+
+  .sources {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .source-chip {
+    background: var(--input-bg);
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--panel-border);
+  }
+
+  /* chat input */
+  .chat-input-area {
+    padding: 1rem 1.5rem 1.25rem;
+    border-top: 1px solid var(--panel-border);
+    flex-shrink: 0;
+  }
+
+  .doc-select-row {
+    margin-bottom: 0.6rem;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+    background: var(--input-bg);
+    color: var(--text);
+    font-size: 0.83rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus { border-color: var(--accent); }
+
+  .input-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    transition: border-color 0.15s;
+  }
+  .input-row:focus-within { border-color: var(--accent); }
+
+  .input-row input[type="text"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    padding: 0;
+    margin: 0;
+  }
+
+  .input-row input[type="text"]::placeholder { color: var(--text-faint); }
+
+  .send-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px var(--accent-glow);
+    transition: filter 0.15s, transform 0.1s;
+    padding: 0;
+  }
+  .send-btn:hover { filter: brightness(1.1); }
+  .send-btn:active { transform: scale(0.95); }
+  .send-btn:disabled { background: #2a2e3a; box-shadow: none; filter: none; cursor: not-allowed; }
+
+  /* hidden status/answer containers — displayed via JS in chat area */
+  #queryStatus, #answerBox { display: none; }
+</style>
 </head>
-<body class="font-body-md text-body-md min-h-screen flex flex-col">
-<div class="mesh-gradient-bg"></div>
-<!-- Desktop NavBar (SCREEN_24) -->
-<header class="desktop-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-margin-desktop h-20 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
-<div class="flex items-center gap-md">
-<span class="font-display-lg text-4xl font-black tracking-tighter text-primary">DocuQuery</span>
-</div>
-<div class="flex items-center gap-sm">
-<button class="technical-accent text-on-primary font-body-md text-body-md px-lg py-sm rounded-xl font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg">
-                New Query
-            </button>
-<div class="flex items-center gap-xs ml-sm text-on-surface-variant">
-<button class="p-base hover:bg-white/5 rounded-full transition-all">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button class="p-base hover:bg-white/5 rounded-full transition-all">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</div>
-</div>
-</header>
-<!-- Mobile NavBar (SCREEN_22) -->
-<header class="mobile-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-margin-mobile h-16 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
-<button class="p-2 hover:bg-white/5 rounded-full">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
-<div class="flex items-center gap-2">
-<div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined text-xl" data-icon="description">description</span>
-</div>
-<span class="font-display-lg text-xl font-bold tracking-tight text-primary">DocuQuery AI</span>
-</div>
-<button class="p-2 hover:bg-white/5 rounded-full">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</header>
-<!-- Main Content -->
-<main class="flex-grow pt-24 md:pt-32 pb-32 md:pb-xl px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Ingest Document Card (Shared but responsive layout) -->
-<section class="md:col-span-12 lg:col-span-4 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md flex flex-col gap-md h-full">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(173,198,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Ingest Document</h2>
-</div>
-<p class="text-on-surface-variant font-body-md text-body-md">
-                        Upload your PDF documents to start querying. We process and vectorize your content for efficient retrieval.
-                    </p>
-<div class="mt-auto">
-<label class="flex flex-col items-center justify-center w-full h-36 md:h-48 border-2 border-dashed border-outline-variant rounded-xl cursor-pointer bg-surface-container-low/50 hover:bg-surface-container-high/50 hover:border-primary/50 transition-all group">
-<div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors mb-sm text-4xl" data-icon="cloud_upload">cloud_upload</span>
-<p class="mb-xs font-body-md text-body-md text-on-surface">Drop PDFs here or tap</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Max size: 50MB</p>
-</div>
-<input accept=".pdf" class="hidden" id="file-upload" multiple="" type="file"/>
-</label>
-<div class="mt-md p-sm bg-primary/5 border border-primary/20 rounded-lg flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary text-sm" data-icon="info">info</span>
-<span class="font-label-sm text-label-sm text-on-surface">PDF, DOCX, TXT supported</span>
-</div>
-</div>
-</div>
-</section>
-<!-- Analysis Engine Card (Shared) -->
-<section class="md:col-span-12 lg:col-span-8 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md flex flex-col h-[500px] md:h-full">
-<div class="flex items-center justify-between mb-lg">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center text-tertiary shadow-[0_0_15px_rgba(137,206,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Analysis Engine</h2>
-</div>
-<div class="flex gap-xs">
-<span class="px-sm py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-[10px] md:text-xs font-medium flex items-center gap-1">
-<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Vector DB Online
-                            </span>
-</div>
-</div>
-<div class="flex-grow flex flex-col bg-surface-container-lowest/50 rounded-xl border border-white/5 p-md overflow-hidden relative">
-<div class="flex-grow overflow-y-auto pr-sm space-y-md custom-scrollbar" id="chat-messages">
-<!-- AI Message -->
-<div class="flex items-start gap-md">
-<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
-</div>
-<div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
-<p class="font-body-md text-sm md:text-body-md text-on-surface">Hello! I'm DocuQuery AI. I've indexed your latest financial reports. What would you like to know about the Q3 projections?</p>
-</div>
-</div>
-<!-- User Message -->
-<div class="flex items-start gap-md justify-end">
-<div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
-<p class="font-body-md text-sm md:text-body-md text-on-surface">Compare the revenue growth between North America and EMEA regions according to the reports.</p>
-</div>
-<div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
-</div>
-</div>
-</div>
-<div class="mt-lg relative">
-<input class="w-full bg-surface-container-highest border border-white/10 rounded-xl px-4 md:px-lg py-md pr-20 md:pr-24 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm md:text-on-surface placeholder:text-on-surface-variant" id="query-input" placeholder="Ask a question..." type="text"/>
-<div class="absolute right-2 top-2 bottom-2 flex gap-1">
-<button class="p-1 md:p-2 text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-lg" data-icon="attachment">attachment</span>
-</button>
-<button class="technical-accent text-on-primary rounded-lg px-2 md:px-md flex items-center justify-center active:scale-95 transition-transform" id="send-query">
-<span class="material-symbols-outlined text-lg" data-icon="send">send</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Your Documents Card (Responsive layout: Stacked on mobile, bottom on desktop) -->
-<section class="md:col-span-12 flex flex-col gap-gutter">
-<div class="glass-card rounded-xl p-md">
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-lg gap-4">
-<div class="flex items-center gap-sm">
-<div class="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center text-secondary shadow-[0_0_15px_rgba(192,193,255,0.3)]">
-<span class="material-symbols-outlined" data-icon="description">description</span>
-</div>
-<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-surface">Your Documents</h2>
-</div>
-<div class="flex gap-sm">
-<div class="relative w-full md:w-64">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm" data-icon="search">search</span>
-<input class="w-full bg-surface-container-low border border-white/10 rounded-full pl-9 pr-md py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50" id="doc-search" placeholder="Search docs..." type="text"/>
-</div>
-</div>
-</div>
-<div class="min-h-[200px]">
-<ul class="doc-list space-y-2" id="document-list">
-<!-- Populated via JS -->
-<li class="p-md text-center text-on-surface-variant opacity-50 italic">Loading documents...</li>
-</ul>
-</div>
-</div>
-</section>
-</div>
-</main>
-<!-- Desktop Footer (SCREEN_24) -->
-<footer class="desktop-only mt-auto bg-background border-t border-white/5 py-lg px-margin-desktop w-full flex flex-col justify-center items-center gap-md">
-<div class="flex flex-col gap-xs items-center w-full">
-<p class="font-label-sm text-label-sm text-on-surface-variant">DocuQuery — RAG over your PDFs, powered by pgvector + Groq</p>
-</div>
-</footer>
-<!-- Mobile Bottom Nav (SCREEN_22) -->
-<nav class="mobile-only fixed bottom-0 w-full bg-surface/80 backdrop-blur-2xl border-t border-white/10 px-8 py-3 flex justify-between items-center z-50">
-<button class="flex flex-col items-center gap-1 text-primary">
-<span class="material-symbols-outlined" data-icon="home">home</span>
-<span class="text-[10px] font-medium">Home</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
-<span class="text-[10px] font-medium">Upload</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="chat">chat</span>
-<span class="text-[10px] font-medium">Queries</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span class="text-[10px] font-medium">Settings</span>
-</button>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <span class="dot"></span>
+    DocuQuery
+  </div>
+  <button class="nav-btn" onclick="resetChat()">New Query</button>
 </nav>
+
+<div class="main">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="panel-section">
+      <div class="panel-label">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Ingest Document
+      </div>
+      <p class="panel-desc">Upload your PDF documents to start querying. We process and vectorize your content for efficient retrieval.</p>
+
+      <label class="dropzone" for="fileInput">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        <p>Drop PDFs here or tap</p>
+        <small>Max size: 50MB</small>
+      </label>
+
+      <input type="file" id="fileInput" accept="application/pdf">
+
+      <div class="upload-row">
+        <label class="file-label" for="fileInput" id="fileLabel">Choose a PDF file...</label>
+        <button class="upload-action-btn" id="uploadBtn">Upload</button>
+      </div>
+
+      <div class="format-hint">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        PDF supported
+      </div>
+
+      <div id="uploadStatus"></div>
+    </div>
+
+    <!-- Your Documents -->
+    <div class="docs-section">
+      <div class="docs-header">
+        <div class="panel-label" style="margin-bottom:0">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Your Documents
+        </div>
+        <div class="search-box">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search docs..." id="docSearch">
+        </div>
+      </div>
+      <ul class="doc-list" id="docList">
+        <li class="loading">Loading...</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="chat-header">
+      <div class="chat-title">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Analysis Engine
+      </div>
+      <span class="status-dot">Vector DB Online</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg ai">
+        <div class="msg-avatar">⚡</div>
+        <div class="msg-bubble">Hello! I'm DocuQuery AI. Upload a PDF on the left and select it below, then ask me anything about its contents.</div>
+      </div>
+    </div>
+
+    <!-- hidden containers JS writes into — we read them and render into chat -->
+    <div id="queryStatus"></div>
+    <div id="answerBox"></div>
+
+    <div class="chat-input-area">
+      <div class="doc-select-row">
+        <select id="docSelect">
+          <option value="">Select a document...</option>
+        </select>
+      </div>
+      <div class="input-row">
+        <input type="text" id="questionInput" placeholder="Ask a question...">
+        <button class="send-btn" id="askBtn" title="Send">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <script>
-        // --- Persistence Logic ---
-        function getMyIds() {
-            try {
-                return JSON.parse(localStorage.getItem('docuquery_ids') || '[]');
-            } catch { return []; }
+  const API_BASE = "https://docuquery-production-9d5f.up.railway.app";
+
+  const fileInput = document.getElementById("fileInput");
+  const uploadBtn = document.getElementById("uploadBtn");
+  const uploadStatus = document.getElementById("uploadStatus");
+  const docList = document.getElementById("docList");
+  const docSelect = document.getElementById("docSelect");
+  const questionInput = document.getElementById("questionInput");
+  const askBtn = document.getElementById("askBtn");
+  const queryStatus = document.getElementById("queryStatus");
+  const answerBox = document.getElementById("answerBox");
+
+  // update file label when file chosen
+  fileInput.addEventListener("change", () => {
+    const label = document.getElementById("fileLabel");
+    label.textContent = fileInput.files[0] ? fileInput.files[0].name : "Choose a PDF file...";
+  });
+
+  // doc search filter
+  document.getElementById("docSearch").addEventListener("input", function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll("#docList li[data-doc-id]").forEach(li => {
+      const name = li.querySelector(".doc-name").textContent.toLowerCase();
+      li.style.display = name.includes(q) ? "" : "none";
+    });
+  });
+
+  function resetChat() {
+    const chat = document.getElementById("chatMessages");
+    chat.innerHTML = `<div class="msg ai"><div class="msg-avatar">⚡</div><div class="msg-bubble">Hello! I'm DocuQuery AI. Upload a PDF on the left and select it below, then ask me anything about its contents.</div></div>`;
+    questionInput.value = "";
+    docSelect.value = "";
+  }
+
+  function statusEl(message, kind) {
+    return `<div class="status ${kind}">${message}</div>`;
+  }
+
+  function appendChat(role, html, sourcesHtml = "") {
+    const chat = document.getElementById("chatMessages");
+    const avatar = role === "ai" ? "⚡" : "👤";
+    const div = document.createElement("div");
+    div.className = `msg ${role}`;
+    div.innerHTML = `
+      <div class="msg-avatar">${avatar}</div>
+      <div>
+        <div class="msg-bubble">${html}</div>
+        ${sourcesHtml}
+      </div>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function getMyIds() {
+    try { return new Set(JSON.parse(localStorage.getItem("docuquery_mine") || "[]")); }
+    catch (e) { return new Set(); }
+  }
+
+  function addMyId(id) {
+    const mine = getMyIds();
+    mine.add(String(id));
+    localStorage.setItem("docuquery_mine", JSON.stringify([...mine]));
+  }
+
+  function getHiddenIds() {
+    try { return new Set(JSON.parse(localStorage.getItem("docuquery_hidden") || "[]")); }
+    catch (e) { return new Set(); }
+  }
+
+  function hideDoc(id) {
+    const hidden = getHiddenIds();
+    hidden.add(String(id));
+    localStorage.setItem("docuquery_hidden", JSON.stringify([...hidden]));
+  }
+
+  async function loadDocuments() {
+    docList.innerHTML = '<li class="loading">Loading...</li>';
+    try {
+      const res = await fetch(`${API_BASE}/documents`);
+      const data = await res.json();
+      const mine = getMyIds();
+      const hidden = getHiddenIds();
+
+      const visibleDocs = (data.documents || []).filter(
+        doc => mine.has(String(doc.id)) && !hidden.has(String(doc.id))
+      );
+
+      if (visibleDocs.length === 0) {
+        docList.innerHTML = '<li class="loading">No documents yet — upload one to get started.</li>';
+        docSelect.innerHTML = '<option value="">Select a document...</option>';
+        return;
+      }
+
+      docList.innerHTML = "";
+      docSelect.innerHTML = '<option value="">Select a document...</option>';
+
+      visibleDocs.forEach(doc => {
+        const li = document.createElement("li");
+        li.dataset.docId = doc.id;
+        li.innerHTML = `
+          <div class="doc-icon">PDF</div>
+          <div class="doc-info"><div class="doc-name">${doc.filename}</div></div>
+          <span class="badge ${doc.status}">${doc.status}</span>
+          <button class="hide-btn" title="Remove from list" data-id="${doc.id}">✕</button>`;
+        docList.appendChild(li);
+
+        if (doc.status === "ready") {
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = doc.filename;
+          docSelect.appendChild(opt);
         }
-        function getHiddenIds() {
-            try {
-                return JSON.parse(localStorage.getItem('docuquery_hidden') || '[]');
-            } catch { return []; }
-        }
-        function saveIds(ids) {
-            localStorage.setItem('docuquery_ids', JSON.stringify(ids));
-        }
-        function toggleHide(id) {
-            let hidden = getHiddenIds();
-            if (hidden.includes(id)) {
-                hidden = hidden.filter(h => h !== id);
-            } else {
-                hidden.push(id);
-            }
-            localStorage.setItem('docuquery_hidden', JSON.stringify(hidden));
-            renderDocumentList();
-        }
+      });
 
-        // --- Render Logic ---
-        function renderDocumentList() {
-            const list = document.getElementById('document-list');
-            if(!list) return;
-
-            const ids = getMyIds();
-            const hidden = getHiddenIds();
-            const searchTerm = document.getElementById('doc-search')?.value.toLowerCase() || "";
-
-            // Mock Data
-            const mockDocs = [
-                { id: '1', name: 'Q3_Financial_Review.pdf', size: '4.2 MB', date: 'Oct 12, 2023', status: 'Indexed' },
-                { id: '2', name: 'Market_Analysis_2024.pdf', size: '12.8 MB', date: 'Oct 10, 2023', status: 'Processing' },
-                { id: '3', name: 'Compliance_Manual_v2.pdf', size: '1.5 MB', date: 'Oct 08, 2023', status: 'Indexed' }
-            ];
-
-            const filteredDocs = mockDocs.filter(doc => 
-                !hidden.includes(doc.id) && 
-                doc.name.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredDocs.length === 0) {
-                list.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">No documents found matching your criteria.</li>';
-                return;
-            }
-
-            list.innerHTML = filteredDocs.map(doc => `
-                <li class="group hover:bg-white/5 transition-colors border-b border-white/5 p-sm flex items-center justify-between rounded-lg">
-                    <div class="flex items-center gap-sm overflow-hidden">
-                        <span class="material-symbols-outlined text-primary shrink-0" data-icon="picture_as_pdf">picture_as_pdf</span>
-                        <div class="truncate">
-                            <span class="text-on-surface font-medium block truncate">${doc.name}</span>
-                            <span class="text-[10px] md:text-xs text-on-surface-variant">${doc.size} • ${doc.date}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 md:gap-md shrink-0">
-                        <span class="px-2 py-0.5 rounded-full ${doc.status === 'Indexed' ? 'bg-green-500/20 text-green-400' : 'bg-tertiary/20 text-tertiary animate-pulse'} text-[8px] md:text-[10px] font-bold uppercase tracking-wider">
-                            ${doc.status}
-                        </span>
-                        <div class="flex gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="toggleHide('${doc.id}')" class="p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant" title="Hide">
-                                <span class="material-symbols-outlined text-sm">visibility_off</span>
-                            </button>
-                            <button class="p-1.5 hover:bg-red-500/10 rounded-lg text-error" title="Delete">
-                                <span class="material-symbols-outlined text-sm">delete</span>
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            `).join('');
-        }
-
-        // --- Interaction handling ---
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('mousedown', () => button.classList.add('scale-95'));
-            button.addEventListener('mouseup', () => button.classList.remove('scale-95'));
-            button.addEventListener('mouseleave', () => button.classList.remove('scale-95'));
+      docList.querySelectorAll(".hide-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          hideDoc(e.currentTarget.dataset.id);
+          loadDocuments();
         });
+      });
+    } catch (err) {
+      docList.innerHTML = '<li class="loading">Could not load documents.</li>';
+    }
+  }
 
-        // Search listener
-        document.getElementById('doc-search')?.addEventListener('input', renderDocumentList);
+  uploadBtn.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      uploadStatus.innerHTML = statusEl("Choose a PDF file first.", "failed");
+      return;
+    }
 
-        // Drag and drop visual feedback
-        const dropZone = document.querySelector('label');
-        if(dropZone) {
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    dropZone.classList.add('bg-primary/10', 'border-primary');
-                });
-            });
+    uploadBtn.disabled = true;
+    uploadStatus.innerHTML = statusEl("Uploading and processing...", "processing");
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropZone.addEventListener(eventName, (e) => {
-                    e.preventDefault();
-                    dropZone.classList.remove('bg-primary/10', 'border-primary');
-                });
-            });
-        }
+    const formData = new FormData();
+    formData.append("file", file);
 
-        // Chat Send Action Simulation
-        document.getElementById('send-query')?.addEventListener('click', () => {
-            const input = document.getElementById('query-input');
-            const chatMessages = document.getElementById('chat-messages');
-            if(input && input.value.trim() && chatMessages) {
-                // User Message
-                const userMsg = document.createElement('div');
-                userMsg.className = "flex items-start gap-md justify-end";
-                userMsg.innerHTML = `
-                    <div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
-                        <p class="font-body-md text-sm md:text-body-md text-on-surface">${input.value}</p>
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-                        <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
-                    </div>
-                `;
-                chatMessages.appendChild(userMsg);
-                input.value = '';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+    try {
+      const res = await fetch(`${API_BASE}/documents`, {
+        method: "POST",
+        body: formData,
+      });
 
-                // Simulate AI Typing
-                setTimeout(() => {
-                    const aiMsg = document.createElement('div');
-                    aiMsg.className = "flex items-start gap-md";
-                    aiMsg.innerHTML = `
-                        <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
-                            <span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
-                        </div>
-                        <div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
-                            <p class="font-body-md text-sm md:text-body-md text-on-surface">I'm analyzing your documents for relevant information... (Simulation)</p>
-                        </div>
-                    `;
-                    chatMessages.appendChild(aiMsg);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 1000);
-            }
-        });
+      if (!res.ok) {
+        const err = await res.json();
+        uploadStatus.innerHTML = statusEl(`Error: ${err.detail || "upload failed"}`, "failed");
+        return;
+      }
 
-        // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            if (getMyIds().length === 0) {
-                saveIds(['1', '2', '3']);
-            }
-            renderDocumentList();
-        });
-    </script>
-</body></html>
+      const doc = await res.json();
+      addMyId(doc.id);
+      uploadStatus.innerHTML = statusEl(
+        `Uploaded "${doc.filename}" — ${doc.page_count} page(s)`,
+        doc.status === "ready" ? "ready" : "processing"
+      );
+      fileInput.value = "";
+      document.getElementById("fileLabel").textContent = "Choose a PDF file...";
+      loadDocuments();
+    } catch (err) {
+      uploadStatus.innerHTML = statusEl("Network error during upload.", "failed");
+    } finally {
+      uploadBtn.disabled = false;
+    }
+  });
+
+  askBtn.addEventListener("click", async () => {
+    const docId = docSelect.value;
+    const question = questionInput.value.trim();
+
+    if (!docId) {
+      appendChat("ai", "Please select a document from the dropdown first.");
+      return;
+    }
+    if (!question) {
+      appendChat("ai", "Please type a question.");
+      return;
+    }
+
+    appendChat("user", question);
+    questionInput.value = "";
+    askBtn.disabled = true;
+
+    // thinking bubble
+    const chat = document.getElementById("chatMessages");
+    const thinking = document.createElement("div");
+    thinking.className = "msg ai";
+    thinking.id = "thinkingBubble";
+    thinking.innerHTML = `<div class="msg-avatar">⚡</div><div class="msg-bubble" style="color:var(--text-dim)">Analyzing your documents...</div>`;
+    chat.appendChild(thinking);
+    chat.scrollTop = chat.scrollHeight;
+
+    try {
+      const res = await fetch(`${API_BASE}/documents/${docId}/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      document.getElementById("thinkingBubble")?.remove();
+
+      if (!res.ok) {
+        const err = await res.json();
+        appendChat("ai", `Error: ${err.detail || "query failed"}`);
+        return;
+      }
+
+      const data = await res.json();
+      queryStatus.innerHTML = "";
+
+      let sourcesHtml = "";
+      if (data.sources && data.sources.length > 0) {
+        sourcesHtml = `<div class="sources">` +
+          data.sources.map(s => `<span class="source-chip">📄 Page ${s.page_number}</span>`).join("") +
+          `</div>`;
+      }
+
+      appendChat("ai", data.answer, sourcesHtml);
+    } catch (err) {
+      document.getElementById("thinkingBubble")?.remove();
+      appendChat("ai", "Network error during query.");
+    } finally {
+      askBtn.disabled = false;
+    }
+  });
+
+  questionInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      askBtn.click();
+    }
+  });
+
+  loadDocuments();
+</script>
+</body>
+</html>
