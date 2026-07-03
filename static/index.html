@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -175,46 +174,45 @@
         .drop-zone-active {
             @apply border-primary bg-primary/10 ring-2 ring-primary/20;
         }
+
+        /* Upload / query status banners (mapped from original status classes) */
+        .status-banner {
+            font-size: 0.8rem;
+            margin-top: 0.75rem;
+            padding: 0.55rem 0.8rem;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+        .status-banner.ready { background: rgba(34,197,94,0.12); color: #5fe39b; border-left-color: #5fe39b; }
+        .status-banner.processing { background: rgba(240,198,111,0.12); color: #f0c66f; border-left-color: #f0c66f; }
+        .status-banner.failed { background: rgba(240,112,122,0.12); color: #f0707a; border-left-color: #f0707a; }
+        .status-banner.info { background: rgba(121,183,255,0.12); color: #79b7ff; border-left-color: #79b7ff; }
     </style>
 </head>
 <body class="font-body-md text-body-md min-h-screen flex flex-col">
 <div class="mesh-gradient-bg"></div>
-<!-- Desktop NavBar (SCREEN_24) -->
+<!-- Desktop NavBar -->
 <header class="desktop-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-margin-desktop h-20 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
 <div class="flex items-center gap-md">
 <span class="font-display-lg text-4xl font-black tracking-tighter text-primary">DocuQuery</span>
 </div>
 <div class="flex items-center gap-sm">
-<button class="technical-accent text-on-primary font-body-md text-body-md px-lg py-sm rounded-xl font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg">
+<button id="new-query-btn" class="technical-accent text-on-primary font-body-md text-body-md px-lg py-sm rounded-xl font-semibold hover:opacity-90 active:scale-95 transition-all shadow-lg">
                 New Query
             </button>
-<div class="flex items-center gap-xs ml-sm text-on-surface-variant">
-<button class="p-base hover:bg-white/5 rounded-full transition-all">
-<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-</button>
-<button class="p-base hover:bg-white/5 rounded-full transition-all">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
-</div>
 </div>
 </header>
-<!-- Mobile NavBar (SCREEN_22) -->
-<header class="mobile-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-between px-margin-mobile h-16 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
-<button class="p-2 hover:bg-white/5 rounded-full">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
+<!-- Mobile NavBar -->
+<header class="mobile-only fixed top-0 w-full bg-surface/40 backdrop-blur-xl border-b border-white/10 z-50 flex items-center justify-center px-margin-mobile h-16 shadow-[0_8px_32px_0_rgba(59,130,246,0.1)]">
 <div class="flex items-center gap-2">
 <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
 <span class="material-symbols-outlined text-xl" data-icon="description">description</span>
 </div>
 <span class="font-display-lg text-xl font-bold tracking-tight text-primary">DocuQuery AI</span>
 </div>
-<button class="p-2 hover:bg-white/5 rounded-full">
-<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
-</button>
 </header>
 <!-- Main Content -->
-<main class="flex-grow pt-24 md:pt-32 pb-32 md:pb-xl px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
+<main class="flex-grow pt-24 md:pt-32 pb-xl px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto w-full">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
 <!-- Ingest Document Card -->
 <section class="md:col-span-12 lg:col-span-4 flex flex-col gap-gutter">
@@ -233,18 +231,15 @@
 <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
 <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors mb-sm text-4xl" data-icon="cloud_upload">cloud_upload</span>
 <p class="mb-xs font-body-md text-body-md text-on-surface">Drop PDFs here or tap</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Max size: 50MB</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">PDF files only</p>
 </div>
-<input accept=".pdf" class="hidden" id="file-upload" multiple="" type="file"/>
+<input accept="application/pdf" class="hidden" id="file-upload" multiple="" type="file"/>
 </label>
-<div class="mt-md p-sm bg-primary/5 border border-primary/20 rounded-lg flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary text-sm" data-icon="info">info</span>
-<span class="font-label-sm text-label-sm text-on-surface">PDF, DOCX, TXT supported</span>
-</div>
+<div id="upload-status"></div>
 </div>
 </div>
 </section>
-<!-- Analysis Engine Card (Shared) -->
+<!-- Analysis Engine Card -->
 <section class="md:col-span-12 lg:col-span-8 flex flex-col gap-gutter">
 <div class="glass-card rounded-xl p-md flex flex-col h-[500px] md:h-full">
 <div class="flex items-center justify-between mb-lg">
@@ -262,31 +257,11 @@
 </div>
 <div class="flex-grow flex flex-col bg-surface-container-lowest/50 rounded-xl border border-white/5 p-md overflow-hidden relative">
 <div class="flex-grow overflow-y-auto pr-sm space-y-md custom-scrollbar" id="chat-messages">
-<!-- AI Message -->
-<div class="flex items-start gap-md">
-<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
-</div>
-<div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
-<p class="font-body-md text-sm md:text-body-md text-on-surface">Hello! I'm DocuQuery AI. I've indexed your latest financial reports. What would you like to know about the Q3 projections?</p>
-</div>
-</div>
-<!-- User Message -->
-<div class="flex items-start gap-md justify-end">
-<div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
-<p class="font-body-md text-sm md:text-body-md text-on-surface">Compare the revenue growth between North America and EMEA regions according to the reports.</p>
-</div>
-<div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
-</div>
-</div>
+<!-- Populated via JS -->
 </div>
 <div class="mt-lg relative">
-<input class="w-full bg-surface-container-highest border border-white/10 rounded-xl px-4 md:px-lg py-md pr-20 md:pr-24 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm md:text-on-surface placeholder:text-on-surface-variant" id="query-input" placeholder="Ask a question..." type="text"/>
+<input class="w-full bg-surface-container-highest border border-white/10 rounded-xl px-4 md:px-lg py-md pr-20 md:pr-24 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm md:text-on-surface placeholder:text-on-surface-variant" id="query-input" placeholder="Select a document below, then ask a question..." type="text"/>
 <div class="absolute right-2 top-2 bottom-2 flex gap-1">
-<button class="p-1 md:p-2 text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-lg" data-icon="attachment">attachment</span>
-</button>
 <button class="technical-accent text-on-primary rounded-lg px-2 md:px-md flex items-center justify-center active:scale-95 transition-transform" id="send-query">
 <span class="material-symbols-outlined text-lg" data-icon="send">send</span>
 </button>
@@ -312,9 +287,9 @@
 </div>
 </div>
 </div>
+<p class="text-on-surface-variant text-xs mb-sm">Click a "ready" document to select it for querying above.</p>
 <div class="min-h-[200px]">
 <ul class="doc-list space-y-2" id="document-list">
-<!-- Populated via JS -->
 <li class="p-md text-center text-on-surface-variant opacity-50 italic">Loading documents...</li>
 </ul>
 </div>
@@ -322,241 +297,354 @@
 </section>
 </div>
 </main>
-<!-- Desktop Footer (SCREEN_24) -->
+<!-- Desktop Footer -->
 <footer class="desktop-only mt-auto bg-background border-t border-white/5 py-lg px-margin-desktop w-full flex flex-col justify-center items-center gap-md">
 <div class="flex flex-col gap-xs items-center w-full">
 <p class="font-label-sm text-label-sm text-on-surface-variant">DocuQuery — RAG over your PDFs, powered by pgvector + Groq</p>
 </div>
 </footer>
-<!-- Mobile Bottom Nav (SCREEN_22) -->
-<nav class="mobile-only fixed bottom-0 w-full bg-surface/80 backdrop-blur-2xl border-t border-white/10 px-8 py-3 flex justify-between items-center z-50">
-<button class="flex flex-col items-center gap-1 text-primary">
-<span class="material-symbols-outlined" data-icon="home">home</span>
-<span class="text-[10px] font-medium">Home</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
-<span class="text-[10px] font-medium">Upload</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="chat">chat</span>
-<span class="text-[10px] font-medium">Queries</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="settings">settings</span>
-<span class="text-[10px] font-medium">Settings</span>
-</button>
-</nav>
 <script>
-        // --- State Management ---
-        let documents = [
-            { id: '1', name: 'Q3_Financial_Review.pdf', size: '4.2 MB', date: 'Oct 12, 2023', status: 'Indexed' },
-            { id: '2', name: 'Market_Analysis_2024.pdf', size: '12.8 MB', date: 'Oct 10, 2023', status: 'Processing' },
-            { id: '3', name: 'Compliance_Manual_v2.pdf', size: '1.5 MB', date: 'Oct 08, 2023', status: 'Indexed' }
-        ];
+    // ============================================================
+    // Backend configuration — DO NOT replace with fake/simulated logic
+    // ============================================================
+    const API_BASE = "https://docuquery-production-9d5f.up.railway.app";
 
-        function getHiddenIds() {
-            try { return JSON.parse(localStorage.getItem('docuquery_hidden') || '[]'); } catch { return []; }
+    const fileUpload = document.getElementById('file-upload');
+    const dropZone = document.getElementById('drop-zone');
+    const uploadStatusEl = document.getElementById('upload-status');
+    const docSearch = document.getElementById('doc-search');
+    const documentListEl = document.getElementById('document-list');
+    const sendQueryBtn = document.getElementById('send-query');
+    const queryInput = document.getElementById('query-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const newQueryBtn = document.getElementById('new-query-btn');
+
+    let allDocuments = [];      // raw list from GET /documents
+    let selectedDocId = null;   // currently selected document for querying
+    let msgCounter = 0;
+
+    // ---- localStorage helpers (same keys as production) ----
+    function getMyIds() {
+        try { return new Set(JSON.parse(localStorage.getItem('docuquery_mine') || '[]')); }
+        catch (e) { return new Set(); }
+    }
+    function addMyId(id) {
+        const mine = getMyIds();
+        mine.add(String(id));
+        localStorage.setItem('docuquery_mine', JSON.stringify([...mine]));
+    }
+    function getHiddenIds() {
+        try { return new Set(JSON.parse(localStorage.getItem('docuquery_hidden') || '[]')); }
+        catch (e) { return new Set(); }
+    }
+    function hideDoc(id) {
+        const hidden = getHiddenIds();
+        hidden.add(String(id));
+        localStorage.setItem('docuquery_hidden', JSON.stringify([...hidden]));
+    }
+
+    // ---- Upload status banner ----
+    function showUploadStatus(message, kind) {
+        uploadStatusEl.innerHTML = `<div class="status-banner ${kind}">${message}</div>`;
+    }
+
+    // ---- Document list rendering ----
+    function statusBadgeClasses(status) {
+        switch (status) {
+            case 'ready': return 'bg-green-500/20 text-green-400';
+            case 'processing': return 'bg-tertiary/20 text-tertiary animate-pulse';
+            case 'failed': return 'bg-error/20 text-error';
+            default: return 'bg-surface-container-highest text-on-surface-variant';
         }
-        
-        function saveHiddenIds(hidden) {
-            localStorage.setItem('docuquery_hidden', JSON.stringify(hidden));
+    }
+
+    function renderDocumentList() {
+        const mine = getMyIds();
+        const hidden = getHiddenIds();
+        const searchTerm = (docSearch?.value || '').toLowerCase();
+
+        const visibleDocs = allDocuments.filter(doc =>
+            mine.has(String(doc.id)) &&
+            !hidden.has(String(doc.id)) &&
+            (doc.filename || '').toLowerCase().includes(searchTerm)
+        );
+
+        if (visibleDocs.length === 0) {
+            documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">No documents uploaded yet from this browser.</li>';
+            return;
         }
 
-        // --- Render Logic ---
-        function renderDocumentList() {
-            const list = document.getElementById('document-list');
-            if(!list) return;
-
-            const hidden = getHiddenIds();
-            const searchTerm = document.getElementById('doc-search')?.value.toLowerCase() || "";
-
-            const filteredDocs = documents.filter(doc => 
-                !hidden.includes(doc.id) && 
-                doc.name.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredDocs.length === 0) {
-                list.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">No documents found matching your criteria.</li>';
-                return;
-            }
-
-            list.innerHTML = filteredDocs.map(doc => `
-                <li class="group hover:bg-white/5 transition-colors border-b border-white/5 p-sm flex items-center justify-between rounded-lg" data-id="${doc.id}">
+        documentListEl.innerHTML = visibleDocs.map(doc => {
+            const isSelected = String(doc.id) === String(selectedDocId);
+            const isReady = doc.status === 'ready';
+            return `
+                <li class="group transition-colors border-b border-white/5 p-sm flex items-center justify-between rounded-lg ${isSelected ? 'bg-primary/10 ring-1 ring-primary/40' : 'hover:bg-white/5'} ${isReady ? 'cursor-pointer' : ''}" data-id="${doc.id}" data-ready="${isReady}">
                     <div class="flex items-center gap-sm overflow-hidden">
                         <span class="material-symbols-outlined text-primary shrink-0" data-icon="picture_as_pdf">picture_as_pdf</span>
                         <div class="truncate">
-                            <span class="text-on-surface font-medium block truncate">${doc.name}</span>
-                            <span class="text-[10px] md:text-xs text-on-surface-variant">${doc.size} • ${doc.date}</span>
+                            <span class="text-on-surface font-medium block truncate doc-filename"></span>
+                            <span class="text-[10px] md:text-xs text-on-surface-variant">${doc.page_count ? doc.page_count + ' page(s)' : ''}${isSelected ? ' • Selected for querying' : ''}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 md:gap-md shrink-0">
-                        <span class="px-2 py-0.5 rounded-full ${doc.status === 'Indexed' ? 'bg-green-500/20 text-green-400' : 'bg-tertiary/20 text-tertiary animate-pulse'} text-[8px] md:text-[10px] font-bold uppercase tracking-wider">
-                            ${doc.status}
-                        </span>
+                        <span class="px-2 py-0.5 rounded-full ${statusBadgeClasses(doc.status)} text-[8px] md:text-[10px] font-bold uppercase tracking-wider">${doc.status}</span>
                         <div class="flex gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="toggleHide('${doc.id}')" class="p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant" title="Hide">
+                            <button class="hide-doc-btn p-1.5 hover:bg-white/10 rounded-lg text-on-surface-variant" data-id="${doc.id}" title="Remove from this list">
                                 <span class="material-symbols-outlined text-sm">visibility_off</span>
-                            </button>
-                            <button onclick="deleteDoc('${doc.id}')" class="p-1.5 hover:bg-red-500/10 rounded-lg text-error" title="Delete">
-                                <span class="material-symbols-outlined text-sm">delete</span>
                             </button>
                         </div>
                     </div>
                 </li>
-            `).join('');
-        }
+            `;
+        }).join('');
 
-        // --- File Handling Logic ---
-        function handleFiles(files) {
-            const filesArray = Array.from(files);
-            filesArray.forEach(file => {
-                if (file.type !== "application/pdf") {
-                    console.warn(`Skipping non-PDF file: ${file.name}`);
-                    return;
-                }
-                
-                const newDoc = {
-                    id: Math.random().toString(36).substr(2, 9),
-                    name: file.name,
-                    size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-                    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                    status: 'Processing'
-                };
-                
-                documents.unshift(newDoc);
-                renderDocumentList();
-
-                // Simulate completion
-                setTimeout(() => {
-                    const doc = documents.find(d => d.id === newDoc.id);
-                    if (doc) {
-                        doc.status = 'Indexed';
-                        renderDocumentList();
-                    }
-                }, 3000);
-            });
-        }
-
-        function toggleHide(id) {
-            let hidden = getHiddenIds();
-            if (hidden.includes(id)) {
-                hidden = hidden.filter(h => h !== id);
-            } else {
-                hidden.push(id);
-            }
-            saveHiddenIds(hidden);
-            renderDocumentList();
-        }
-
-        function deleteDoc(id) {
-            documents = documents.filter(doc => doc.id !== id);
-            renderDocumentList();
-        }
-
-        // --- Interaction handling ---
-        window.addEventListener('DOMContentLoaded', () => {
-            const fileUpload = document.getElementById('file-upload');
-            const dropZone = document.getElementById('drop-zone');
-            const docSearch = document.getElementById('doc-search');
-            const sendQuery = document.getElementById('send-query');
-            const queryInput = document.getElementById('query-input');
-            const chatMessages = document.getElementById('chat-messages');
-
-            // File Upload Trigger
-            if (fileUpload) {
-                fileUpload.addEventListener('change', (e) => {
-                    handleFiles(e.target.files);
-                    fileUpload.value = ''; // Reset to allow same file upload
-                });
-            }
-
-            // Drag and Drop Logic
-            if (dropZone) {
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }, false);
-                });
-
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, () => {
-                        dropZone.classList.add('drop-zone-active');
-                    }, false);
-                });
-
-                ['dragleave', 'drop'].forEach(eventName => {
-                    dropZone.addEventListener(eventName, () => {
-                        dropZone.classList.remove('drop-zone-active');
-                    }, false);
-                });
-
-                dropZone.addEventListener('drop', (e) => {
-                    const dt = e.dataTransfer;
-                    const files = dt.files;
-                    handleFiles(files);
-                }, false);
-            }
-
-            // Search listener
-            if (docSearch) {
-                docSearch.addEventListener('input', renderDocumentList);
-            }
-
-            // Chat Simulation
-            if (sendQuery && queryInput && chatMessages) {
-                const triggerSend = () => {
-                    const text = queryInput.value.trim();
-                    if (!text) return;
-
-                    // User Message
-                    const userMsg = document.createElement('div');
-                    userMsg.className = "flex items-start gap-md justify-end";
-                    userMsg.innerHTML = `
-                        <div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
-                            <p class="font-body-md text-sm md:text-body-md text-on-surface">${text}</p>
-                        </div>
-                        <div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
-                            <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
-                        </div>
-                    `;
-                    chatMessages.appendChild(userMsg);
-                    queryInput.value = '';
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                    // Simulate AI Typing
-                    setTimeout(() => {
-                        const aiMsg = document.createElement('div');
-                        aiMsg.className = "flex items-start gap-md";
-                        aiMsg.innerHTML = `
-                            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
-                                <span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
-                            </div>
-                            <div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
-                                <p class="font-body-md text-sm md:text-body-md text-on-surface">I'm analyzing your documents for relevant information regarding "${text}"...</p>
-                            </div>
-                        `;
-                        chatMessages.appendChild(aiMsg);
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 1000);
-                };
-
-                sendQuery.addEventListener('click', triggerSend);
-                queryInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') triggerSend();
-                });
-            }
-
-            // Global Button Feedback
-            document.querySelectorAll('button').forEach(button => {
-                button.addEventListener('mousedown', () => button.classList.add('scale-95'));
-                button.addEventListener('mouseup', () => button.classList.remove('scale-95'));
-                button.addEventListener('mouseleave', () => button.classList.remove('scale-95'));
-            });
-
-            // Initial Render
-            renderDocumentList();
+        // Fill filenames via textContent to avoid HTML injection from filenames
+        documentListEl.querySelectorAll('li[data-id]').forEach(li => {
+            const doc = visibleDocs.find(d => String(d.id) === li.dataset.id);
+            const nameEl = li.querySelector('.doc-filename');
+            if (doc && nameEl) nameEl.textContent = doc.filename;
         });
-    </script>
+
+        documentListEl.querySelectorAll('.hide-doc-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = e.currentTarget.dataset.id;
+                hideDoc(id);
+                if (String(selectedDocId) === String(id)) selectedDocId = null;
+                renderDocumentList();
+                updateQueryPlaceholder();
+            });
+        });
+
+        documentListEl.querySelectorAll('li[data-ready="true"]').forEach(li => {
+            li.addEventListener('click', () => {
+                selectedDocId = li.dataset.id;
+                renderDocumentList();
+                updateQueryPlaceholder();
+            });
+        });
+    }
+
+    function updateQueryPlaceholder() {
+        const doc = allDocuments.find(d => String(d.id) === String(selectedDocId));
+        queryInput.placeholder = doc
+            ? `Ask something about "${doc.filename}"...`
+            : 'Select a document below, then ask a question...';
+    }
+
+    async function loadDocuments() {
+        documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">Loading documents...</li>';
+        try {
+            const res = await fetch(`${API_BASE}/documents`);
+            const data = await res.json();
+            allDocuments = data.documents || [];
+
+            // Deselect if the previously selected doc disappeared or is no longer ready
+            if (selectedDocId && !allDocuments.some(d => String(d.id) === String(selectedDocId) && d.status === 'ready')) {
+                selectedDocId = null;
+            }
+            renderDocumentList();
+            updateQueryPlaceholder();
+        } catch (err) {
+            documentListEl.innerHTML = '<li class="p-md text-center text-on-surface-variant opacity-50 italic">Could not load documents.</li>';
+        }
+    }
+
+    // ---- Real upload logic (replaces the fake setTimeout simulation) ----
+    async function handleFiles(files) {
+        const filesArray = Array.from(files);
+        for (const file of filesArray) {
+            if (file.type !== 'application/pdf') {
+                showUploadStatus(`Skipped "${file.name}" — only PDF files are supported.`, 'failed');
+                continue;
+            }
+
+            showUploadStatus(`Uploading "${file.name}"...`, 'processing');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch(`${API_BASE}/documents`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    showUploadStatus(`Error uploading "${file.name}": ${err.detail || 'upload failed'}`, 'failed');
+                    continue;
+                }
+
+                const doc = await res.json();
+                addMyId(doc.id);
+                showUploadStatus(
+                    `Uploaded "${doc.filename}" — status: ${doc.status}${doc.page_count ? ` (${doc.page_count} page(s))` : ''}`,
+                    doc.status === 'ready' ? 'ready' : 'processing'
+                );
+                loadDocuments();
+            } catch (err) {
+                showUploadStatus(`Network error uploading "${file.name}".`, 'failed');
+            }
+        }
+    }
+
+    // ---- Chat / query UI helpers ----
+    function appendUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-md justify-end';
+        div.innerHTML = `
+            <div class="bg-primary-container/20 p-md rounded-2xl rounded-tr-none border border-primary/20 max-w-[85%]">
+                <p class="font-body-md text-sm md:text-body-md text-on-surface"></p>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary shrink-0">
+                <span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+            </div>`;
+        div.querySelector('p').textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function appendAiMessage(text, isThinking = false) {
+        msgCounter++;
+        const id = 'ai-msg-' + msgCounter;
+        const div = document.createElement('div');
+        div.className = 'flex items-start gap-md';
+        div.id = id;
+        div.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary shrink-0">
+                <span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
+            </div>
+            <div class="bg-surface-container-high p-md rounded-2xl rounded-tl-none border border-white/5 max-w-[85%]">
+                <p class="font-body-md text-sm md:text-body-md text-on-surface msg-text ${isThinking ? 'italic opacity-60' : ''}"></p>
+                <div class="msg-extra"></div>
+            </div>`;
+        div.querySelector('.msg-text').textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return id;
+    }
+
+    function replaceMessage(id, text, extraHtml = '') {
+        const div = document.getElementById(id);
+        if (!div) return;
+        const p = div.querySelector('.msg-text');
+        p.textContent = text;
+        p.classList.remove('italic', 'opacity-60');
+        const extra = div.querySelector('.msg-extra');
+        if (extra) extra.innerHTML = extraHtml;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // ---- Real query logic (replaces the fake chat simulation) ----
+    async function sendQuery() {
+        const question = queryInput.value.trim();
+
+        if (!selectedDocId) {
+            appendAiMessage('Please select a "ready" document from "Your Documents" below before asking a question.');
+            return;
+        }
+        if (!question) return;
+
+        appendUserMessage(question);
+        queryInput.value = '';
+
+        const thinkingId = appendAiMessage('Thinking...', true);
+
+        try {
+            const res = await fetch(`${API_BASE}/documents/${selectedDocId}/query`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                replaceMessage(thinkingId, `Error: ${err.detail || 'query failed'}`);
+                return;
+            }
+
+            const data = await res.json();
+            let sourcesHtml = '';
+            if (data.sources && data.sources.length > 0) {
+                sourcesHtml = `<div class="flex flex-wrap gap-1 mt-2">` +
+                    data.sources.map(s => `<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded-full border border-white/10">📄 Page ${s.page_number}</span>`).join('') +
+                    `</div>`;
+            }
+            replaceMessage(thinkingId, data.answer, sourcesHtml);
+        } catch (err) {
+            replaceMessage(thinkingId, 'Network error during query.');
+        }
+    }
+
+    function resetConversation() {
+        chatMessages.innerHTML = '';
+        selectedDocId = null;
+        renderDocumentList();
+        updateQueryPlaceholder();
+        appendAiMessage("Hello! I'm DocuQuery AI. Select a document below, then ask me anything about it.");
+    }
+
+    // ---- Wiring ----
+    window.addEventListener('DOMContentLoaded', () => {
+        if (fileUpload) {
+            fileUpload.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+                fileUpload.value = '';
+            });
+        }
+
+        if (dropZone) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('drop-zone-active');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('drop-zone-active');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                handleFiles(dt.files);
+            }, false);
+        }
+
+        if (docSearch) {
+            docSearch.addEventListener('input', renderDocumentList);
+        }
+
+        if (sendQueryBtn && queryInput) {
+            sendQueryBtn.addEventListener('click', sendQuery);
+            queryInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendQuery();
+            });
+        }
+
+        if (newQueryBtn) {
+            newQueryBtn.addEventListener('click', resetConversation);
+        }
+
+        // Global button press feedback (cosmetic, from the new UI)
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => button.classList.add('scale-95'));
+            button.addEventListener('mouseup', () => button.classList.remove('scale-95'));
+            button.addEventListener('mouseleave', () => button.classList.remove('scale-95'));
+        });
+
+        // Initial load
+        appendAiMessage("Hello! I'm DocuQuery AI. Select a document below, then ask me anything about it.");
+        loadDocuments();
+    });
+</script>
 </body></html>
