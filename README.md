@@ -23,6 +23,19 @@ Together they cover the two dominant data shapes in real-world ML systems, and t
 <img width="617" height="1024" alt="image" src="https://github.com/user-attachments/assets/946713cc-2ed3-4cbd-b2e0-a5ea9ff7379d" />
 
 ---
+## Features
+
+✔ Async document processing using Redis + RQ
+✔ Semantic search with PostgreSQL + pgvector
+✔ Local embeddings using sentence-transformers (no embedding API cost)
+✔ Grounded LLM responses with page-level citations
+✔ Conditional LLM invocation to reduce hallucinations and inference costs
+✔ REST API with automatic OpenAPI documentation
+✔ 16 automated unit and integration tests
+✔ GitHub Actions CI pipeline
+✔ Dockerized deployment
+
+---
 
 ## Tech stack
 
