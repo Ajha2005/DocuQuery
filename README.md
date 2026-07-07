@@ -20,7 +20,30 @@ This is one half of a two-project portfolio designed to demonstrate end-to-end M
 Together they cover the two dominant data shapes in real-world ML systems, and the engineering discipline needed for each: schema design and feature engineering on one side, embeddings and retrieval pipelines on the other.
 
 ---
-<img width="617" height="1024" alt="image" src="https://github.com/user-attachments/assets/946713cc-2ed3-4cbd-b2e0-a5ea9ff7379d" />
+flowchart LR
+
+    Client([Client])
+
+    subgraph Upload
+        API1[FastAPI]
+        Queue[Redis + RQ]
+        Worker[Background Worker]
+        DB[(PostgreSQL + pgvector)]
+
+        API1 --> Queue --> Worker --> DB
+    end
+
+    subgraph Query
+        API2[FastAPI]
+        Search[Vector Search]
+        LLM[Groq]
+        API2 --> Search --> DB
+        DB --> LLM
+    end
+
+    Client -->|Upload PDF| API1
+    Client -->|Ask Question| API2
+    LLM -->|Answer + Citations| Client
 
 ---
 ## Features
