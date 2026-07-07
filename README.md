@@ -61,7 +61,7 @@ Together they cover the two dominant data shapes in real-world ML systems, and t
 4. **Cite** — every answer returns the source chunks and their page numbers, so you can verify the answer against the original document.
 
 ---
-## Design decisions worth knowing about
+## Engineering Decisions
 
 - **Chunking uses overlapping windows, not hard cuts.** If a sentence carrying key information gets split exactly at a chunk boundary, its embedding can lose meaning. Overlap lets context bleed across the boundary.
 - **Documents and chunks are separate tables (one-to-many)**, not one denormalized blob — this keeps page-level citation accurate and lets each chunk carry its own embedding independently.
