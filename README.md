@@ -57,14 +57,13 @@ Together they cover the two dominant data shapes in real-world ML systems, and t
 - **If retrieval finds nothing relevant, the LLM is never called.** This is both a cost optimization and a hallucination guard — an honest "I don't have enough information" beats a confident, made-up answer.
 - **The embedding model is cached in memory (`lru_cache`)**, loaded once per process rather than per request — loading from disk takes real time and shouldn't happen on every query.
 - **The LLM provider/model name lives in one config variable.** This paid off directly: midway through building, Groq deprecated the original model (`llama3-8b-8192`) entirely. Swapping to the new recommended model (`openai/gpt-oss-20b`) took one line, not a refactor.
-- **PDF processing runs in a background worker, not inline with the upload request. Doing extraction + chunking + embedding synchronously would block the HTTP response for 10–30 seconds on a large PDF, and would fail entirely if the server restarted mid-upload. With RQ + Redis, the upload returns instantly, the work survives restarts, and the worker can be scaled independently of the API server.
+- **PDF processing runs in a background worker, not inline with the upload request.** Doing extraction + chunking + embedding synchronously would block the HTTP response for 10–30 seconds on a large PDF, and would fail entirely if the server restarted mid-upload. With RQ + Redis, the upload returns instantly, the work survives restarts, and the worker can be scaled independently of the API server.
 - **CI runs tests against a real Postgres + pgvector service container**, not a mock — catching real SQL/vector issues, not just Python logic errors.
 
 ---
 
 ## Known simplifications (and what I'd change for "real" production)
 
-- Uploaded PDFs are stored on local/ephemeral disk, not object storage (S3, etc.) — fine for a demo, not durable for production.
 - No authentication — anyone with the URL can upload and query. Would add auth before any real multi-user use.
 - Token counts are approximated by word count, not a real tokenizer — good enough for a portfolio project, not for cost-accurate production billing.
 - CORS is wide open (`allow_origins=["*"]`) to let the static frontend call the API from any origin — would scope this to a specific domain in production.
