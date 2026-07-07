@@ -13,6 +13,6 @@ class Document(Base):
     filename = Column(String, nullable=False)
     upload_time = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     page_count = Column(Integer, nullable=True)
-    status = Column(String, default="processing", nullable=False)
+    status = Column(String, default="pending", nullable=False)
 
     chunks = relationship("Chunk", back_populates="document", cascade="all, delete-orphan")
