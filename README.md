@@ -53,8 +53,14 @@ Together they cover the two dominant data shapes in real-world ML systems, and t
 
 
 ---
-<details>
-  
+## How it works
+
+1. **Upload** —  a PDF is uploaded and saved to disk. A job is immediately queued (RQ + Redis) and the endpoint returns with status: "pending" — no blocking. A background worker picks up the job, extracts text page-by-page (PyMuPDF), splits it into overlapping word-based chunks, embeds them locally, and stores everything in Postgres. Status transitions from pending → processing → ready (or failed).
+2. **Query** — your question is embedded the same way, and pgvector finds the most semantically similar chunks *within that specific document* using cosine distance, computed directly in SQL.
+3. **Generate** — the retrieved chunks are inserted into a prompt that explicitly instructs the model not to use outside knowledge, then sent to Groq at low temperature for a grounded, low-hallucination answer.
+4. **Cite** — every answer returns the source chunks and their page numbers, so you can verify the answer against the original document.
+
+---
 ## Design decisions worth knowing about
 
 - **Chunking uses overlapping windows, not hard cuts.** If a sentence carrying key information gets split exactly at a chunk boundary, its embedding can lose meaning. Overlap lets context bleed across the boundary.
@@ -67,16 +73,6 @@ Together they cover the two dominant data shapes in real-world ML systems, and t
 - **CI runs tests against a real Postgres + pgvector service container**, not a mock — catching real SQL/vector issues, not just Python logic errors.
 
 ---
-## How it works
-
-1. **Upload** —  a PDF is uploaded and saved to disk. A job is immediately queued (RQ + Redis) and the endpoint returns with status: "pending" — no blocking. A background worker picks up the job, extracts text page-by-page (PyMuPDF), splits it into overlapping word-based chunks, embeds them locally, and stores everything in Postgres. Status transitions from pending → processing → ready (or failed).
-2. **Query** — your question is embedded the same way, and pgvector finds the most semantically similar chunks *within that specific document* using cosine distance, computed directly in SQL.
-3. **Generate** — the retrieved chunks are inserted into a prompt that explicitly instructs the model not to use outside knowledge, then sent to Groq at low temperature for a grounded, low-hallucination answer.
-4. **Cite** — every answer returns the source chunks and their page numbers, so you can verify the answer against the original document.
-
----
-
-
 
 ## Known simplifications (and what I'd change for "real" production)
 
