@@ -57,11 +57,12 @@ def process_document(document_id: int, file_path: str) -> None:
         document.status = "ready"
         db.commit()
 
-    except PDFExtractionError as e:
+    except PDFExtractionError:
         document.status = "failed"
         db.commit()
         raise  # let RQ record the job as failed, with the traceback in its log
 
     finally:
         db.close()
+
 
