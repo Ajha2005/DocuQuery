@@ -31,7 +31,8 @@ httpx==0.28.1
 python-dotenv==1.0.1
 ruff==0.8.4
 
+# Async job queue
 rq ==2.1.0
-redis==5.2.1" >> requirements.txt
+redis==5.2.1" 
 pip install rq ==2.1.0 redis==5.2.1
 
